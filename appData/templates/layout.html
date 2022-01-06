@@ -16,20 +16,20 @@
 
               <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                   {% for page in pageList %}
-                    {% if page == title.lower() %}
-                  <li><a href="{{ url_for(page) }}" class="nav-link px-2 text-capitalize link-secondary">{{ page }}</a></li>
+                    {% if page.name == title.lower() %}
+                  <li><a href="{{ url_for(page.href) }}" class="nav-link px-2 text-capitalize link-secondary">{{ page.name }}</a></li>
                     {% else %}
-                  <li><a href="{{ url_for(page) }}" class="nav-link px-2 text-capitalize link-dark">{{ page }}</a></li>
+                  <li><a href="{{ url_for(page.href) }}" class="nav-link px-2 text-capitalize link-dark">{{ page.name }}</a></li>
                     {% endif %}
                   {% endfor %}
               </ul>
 
               <div class="col-md-3 text-end">
                 <a href="{{ url_for('login') }}">
-                    <button type="button" class="btn btn-outline-primary me-2">Login</button>
+                    <button type="button" class="btn btn-outline-primary me-2">Zaloguj</button>
                 </a>
                 <a href="{{ url_for('register') }}">
-                    <button type="button" class="btn btn-primary">Sign-up</button>
+                    <button type="button" class="btn btn-primary">Rejestracja</button>
                 </a>
               </div>
           </header>

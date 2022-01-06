@@ -1,23 +1,27 @@
 from flask import render_template, url_for, flash, redirect
 from appData import app
 
-pageList = ['home', 'about', 'admin']
+pageList = [
+        {'name': 'start', 'href': 'home'},
+        {'name': 'o projekcie', 'href': 'about'},
+        {'name': 'admin', 'href': 'admin'}
+    ]
 
 
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('index.html', title='Home', pageList=pageList)
+    return render_template('index.html', title='Start', pageList=pageList)
 
 
 @app.route('/login')
 def login():
-    return 'Login'
+    return render_template('login.html', title='Logowanie', pageList=pageList)
 
 
 @app.route('/register')
 def register():
-    return 'Register'
+    return render_template('register.html', title='Rejestracja', pageList=pageList)
 
 
 @app.route('/about')

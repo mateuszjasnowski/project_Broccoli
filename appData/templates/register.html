@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+<link href="{{ url_for('static',filename='/css/signin.css') }}" rel="stylesheet">
+    <main class="container d-flex justify-content-center">
+  <form>
+    <img class="mb-4" src="/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> <!-- TODO -->
+    <h1 class="h3 mb-3 fw-normal">Rejestracja</h1>
+    <div class="row">
+      <div class="form-floating col-md-5">
+        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+        <label for="floatingInput">Adres email</label>
+      </div>
+      <div class="form-floating col-md-5">
+        <input type="email" class="form-control" id="floatingInput2" placeholder="name@example.com">
+        <label for="floatingInput2">Potwierdź adres email</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-floating col-md-5">
+        <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+        <label for="floatingPassword">Hasło</label>
+      </div>
+      <div class="form-floating col-md-5">
+        <input type="password" class="form-control" id="floatingPassword2" placeholder="Password">
+        <label for="floatingPassword2">Potwierdź hasło</label>
+      </div>
+    </div>
+    <button class="w-100 btn btn-lg btn-primary m-2" type="submit">Zarejestruj</button>
+    <p class="mt-5 mb-3 text-muted">Projekt Brokół &copy; 2021-2022</p>
+  </form>
+</main>
+{% endblock content %}
