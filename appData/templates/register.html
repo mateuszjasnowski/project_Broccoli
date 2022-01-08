@@ -2,31 +2,98 @@
 {% block content %}
 <link href="{{ url_for('static',filename='/css/signin.css') }}" rel="stylesheet">
     <main class="container d-flex justify-content-center">
-  <form>
-    <img class="mb-4" src="/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> <!-- TODO -->
+  <form class="needs-validation novalidate">
+    <!--<img class="mb-4" src="/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> <!-- TODO -->
     <h1 class="h3 mb-3 fw-normal">Rejestracja</h1>
-    <div class="row">
-      <div class="form-floating col-md-5">
-        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+    <div class="row justify-content-center">
+      <div class="form-floating col-md-12 px-1 my-1">
+        <input type="text" class="form-control" id="login" placeholder="login" required>
+        <label for="login">Login</label>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="text" class="form-control" id="userFirstName" placeholder="First name" required>
+        <label for="userFirstName">Imię</label>
+      </div>
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="text" class="form-control" id="userLastName" placeholder="Last name" required>
+        <label for="userLastName">Nazwisko</label>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" required>
         <label for="floatingInput">Adres email</label>
       </div>
-      <div class="form-floating col-md-5">
-        <input type="email" class="form-control" id="floatingInput2" placeholder="name@example.com">
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="email" class="form-control" id="floatingInput2" placeholder="name@example.com" required>
         <label for="floatingInput2">Potwierdź adres email</label>
       </div>
     </div>
-    <div class="row">
-      <div class="form-floating col-md-5">
-        <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+    <div class="row justify-content-center">
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" required>
         <label for="floatingPassword">Hasło</label>
       </div>
-      <div class="form-floating col-md-5">
-        <input type="password" class="form-control" id="floatingPassword2" placeholder="Password">
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="password" class="form-control" id="floatingPassword2" placeholder="Password" required>
         <label for="floatingPassword2">Potwierdź hasło</label>
       </div>
     </div>
-    <button class="w-100 btn btn-lg btn-primary m-2" type="submit">Zarejestruj</button>
+    <small id="passwordHelpBlock" class="form-text text-muted">
+      Twoje hasło musi składać się z 8-12 znaków, może zawierać litery, cyfry i znaki specjalne, nie może zawierać spacji lub emoji.
+    </small>
+    <div class="row justify-content-center">
+      <div class="form-floating col-md-12 px-1 my-1">
+        <input type="date" class="form-control" id="birthday" placeholder="Birthday" required>
+        <label for="birthday">Data urodzenia</label>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="form-floating col-md-12 px-1 my-1">
+        <select type="option" class="form-control" id="sex" placeholder="Sex">
+          <option disabled selected value>Wybierz</option>
+          <option>Mężczyzna</option>
+          <option>Kobieta</option>
+          <option>Inna</option>
+        </select>
+        <label for="birthday">Płeć</label>
+      </div>
+    </div>
+    <hr class="my-4">
+    <div class="row justify-content-center">
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="confirm-terms" required>
+        <label class="form-check-label" for="confirm-terms">Potwierdzam zapoznanie się i zgodnę z <a href='{{ url_for('terms') }}'>regulaminem użytkowania</a></label>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <button class="w-100 btn btn-lg btn-primary m-2" type="submit">Zarejestruj</button>
+    </div>
+    <hr class="my-4">
     <p class="mt-5 mb-3 text-muted">Projekt Brokół &copy; 2021-2022</p>
   </form>
 </main>
+<script  
+<script>
+  // Example starter JavaScript for disabling form submissions if there are invalid fields
+  (function() {
+    'use strict';
+    window.addEventListener('load', function() {
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = document.getElementsByClassName('needs-validation');
+      // Loop over them and prevent submission
+      var validation = Array.prototype.filter.call(forms, function(form) {
+        form.addEventListener('submit', function(event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    }, false);
+  })();
+  </script>
 {% endblock content %}

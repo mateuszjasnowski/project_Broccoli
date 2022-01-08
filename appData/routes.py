@@ -26,9 +26,14 @@ def register():
 
 @app.route('/about')
 def about():
-    return 'Hi'
+    return 'Hi' #TODO
 
 
 @app.route('/admin')
 def admin():
-    return 'Hi'
+    return 'Hi' #TODO
+
+
+@app.route('/terms')
+def terms():
+    return "User Terms" #TODO
