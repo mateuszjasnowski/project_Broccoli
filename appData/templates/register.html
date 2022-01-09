@@ -3,41 +3,42 @@
 <link href="{{ url_for('static',filename='/css/signin.css') }}" rel="stylesheet">
     <main class="container d-flex justify-content-center">
   <form class="needs-validation novalidate">
-    <!--<img class="mb-4" src="/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> <!-- TODO -->
+    <img class="mb-4" src="{{ url_for('static',filename='/img/broccoli.ico') }}" alt="" width="72" height="57">
     <h1 class="h3 mb-3 fw-normal">Rejestracja</h1>
     <div class="row justify-content-center">
       <div class="form-floating col-md-12 px-1 my-1">
-        <input type="text" class="form-control" id="login" placeholder="login" required>
+        <input type="text" class="form-control" id="login" placeholder="login" >
         <label for="login">Login</label>
       </div>
     </div>
     <div class="row justify-content-center">
       <div class="form-floating col-md-6 px-1 my-1">
-        <input type="text" class="form-control" id="userFirstName" placeholder="First name" required>
+        <input type="text" class="form-control" id="userFirstName" placeholder="First name" >
         <label for="userFirstName">Imię</label>
       </div>
       <div class="form-floating col-md-6 px-1 my-1">
-        <input type="text" class="form-control" id="userLastName" placeholder="Last name" required>
+        <input type="text" class="form-control" id="userLastName" placeholder="Last name" >
         <label for="userLastName">Nazwisko</label>
       </div>
     </div>
     <div class="row justify-content-center">
       <div class="form-floating col-md-6 px-1 my-1">
-        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" required>
+        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" >
         <label for="floatingInput">Adres email</label>
       </div>
       <div class="form-floating col-md-6 px-1 my-1">
-        <input type="email" class="form-control" id="floatingInput2" placeholder="name@example.com" required>
+        <input type="email" class="form-control" id="floatingInput2" placeholder="name@example.com" >
         <label for="floatingInput2">Potwierdź adres email</label>
       </div>
     </div>
+
     <div class="row justify-content-center">
       <div class="form-floating col-md-6 px-1 my-1">
-        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" required>
+        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" >
         <label for="floatingPassword">Hasło</label>
       </div>
       <div class="form-floating col-md-6 px-1 my-1">
-        <input type="password" class="form-control" id="floatingPassword2" placeholder="Password" required>
+        <input type="password" class="form-control" id="floatingPassword2" placeholder="Password" >
         <label for="floatingPassword2">Potwierdź hasło</label>
       </div>
     </div>
@@ -46,7 +47,7 @@
     </small>
     <div class="row justify-content-center">
       <div class="form-floating col-md-12 px-1 my-1">
-        <input type="date" class="form-control" id="birthday" placeholder="Birthday" required>
+        <input type="date" class="form-control" id="birthday" placeholder="Birthday" >
         <label for="birthday">Data urodzenia</label>
       </div>
     </div>
@@ -64,7 +65,7 @@
     <hr class="my-4">
     <div class="row justify-content-center">
       <div class="form-check">
-        <input type="checkbox" class="form-check-input" id="confirm-terms" required>
+        <input type="checkbox" class="form-check-input" id="confirm-terms" >
         <label class="form-check-label" for="confirm-terms">Potwierdzam zapoznanie się i zgodnę z <a href='{{ url_for('terms') }}'>regulaminem użytkowania</a></label>
       </div>
     </div>
@@ -72,10 +73,9 @@
       <button class="w-100 btn btn-lg btn-primary m-2" type="submit">Zarejestruj</button>
     </div>
     <hr class="my-4">
-    <p class="mt-5 mb-3 text-muted">Projekt Brokół &copy; 2021-2022</p>
+    <p class="mt-5 mb-3 text-muted">Projekt Brokół &#x1F966; &copy; 2021-2022</p>
   </form>
 </main>
-<script  
 <script>
   // Example starter JavaScript for disabling form submissions if there are invalid fields
   (function() {

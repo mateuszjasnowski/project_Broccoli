@@ -35,5 +35,6 @@ def admin():
 
 
 @app.route('/terms')
-def terms():
-    return "User Terms" #TODO
+def terms(*args):
+    print('kurwaaa')
+    return redirect(url_for('register',title=args)) #TODO
