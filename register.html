@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<link href="{{ url_for('static',filename='/css/signin.css') }}" rel="stylesheet">
+    <main class="container d-flex justify-content-center">
+  <form class="needs-validation novalidate" id='register-form' action="{{ url_for('register_proceed') }}" method="post">
+    <img class="mb-4" src="{{ url_for('static',filename='/img/broccoli.ico') }}" alt="" width="72" height="57">
+    <div id="formGeneralErrors">
+      {% if request.args.get('message') %}
+        <div class="formErrorMessage" style="display: block">
+          {{ request.args.get('message') }}
+        </div>
+      {% endif %}
+    </div>
+    <h1 class="h3 mb-3 fw-normal">Rejestracja</h1>
+    <div class="row justify-content-center">
+      <div class="form-floating col-md-12 px-1 my-1">
+        <input type="text" class="form-control" id="login" name='login' placeholder="login" required>
+        <label for="login">Login</label>
+      </div>
+      <div class="formErrorMessage" id="loginErrorEmpty">
+        Login nie może być pusty !
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="text" class="form-control" id="userFirstName" name='userFirstName' placeholder="Imię">
+        <label for="userFirstName">Imię</label>
+      </div>
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="text" class="form-control" id="userLastName" name='userLastName' placeholder="Nazwisko">
+        <label for="userLastName">Nazwisko</label>
+      </div>
+    </div>
+    <div class="row justify-content-center need-identical">
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="email" class="form-control need-identical-input" id="email" name="email" placeholder="email" required> <!-- border-danger -->
+        <label for="floatingInput">Adres email</label>
+      </div>
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="email" class="form-control need-identical-input" id="emailConfirm" placeholder="potwierdź email" required> <!-- border-danger -->
+        <label for="floatingInput2">Potwierdź adres email</label>
+      </div>
+      <div class="formErrorMessage" id="emailErrorNotIdentical">
+        Podane adresy email nie są jednakowe !
+      </div>
+      <div class="formErrorMessage" id="emailErrorEmpty">
+        Email nie może być pusty !
+      </div>
+    </div>
+    <div class="row justify-content-center need-identical">
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="password" class="form-control need-identical-input" id="password" placeholder="hasło" name='password'> <!-- border-danger -->
+        <label for="floatingPassword">Hasło</label>
+      </div>
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="password" class="form-control need-identical-input" id="passwordConfirm" placeholder="potwierdź hasło"> <!-- border-danger -->
+        <label for="floatingPassword2">Potwierdź hasło</label>
+      </div>
+      <div class="formErrorMessage" id="passwordErrorNotIdentical">
+        Podane hasła nie są jednakowe !
+      </div>
+      <div class="formErrorMessage" id="passwordErrorEmpty">
+        Musisz podać hasło !
+      </div>
+    </div>
+    <small id="passwordHelpBlock" class="form-text text-muted">
+      Twoje hasło musi składać się z 8-12 znaków, może zawierać litery, cyfry i znaki specjalne, nie może zawierać spacji lub emoji.
+    </small>
+    <div class="row justify-content-center">
+      <div class="form-floating col-md-12 px-1 my-1">
+        <input type="date" class="form-control" id="birthday" name="birthday">
+        <label for="birthday">Data urodzenia</label>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="form-floating col-md-12 px-1 my-1">
+        <select type="option" class="form-control" id="sex" name='sex'>
+          <option disabled selected value>Wybierz</option>
+          <option>Mężczyzna</option>
+          <option>Kobieta</option>
+          <option>Inna</option>
+        </select>
+        <label for="birthday">Płeć</label>
+      </div>
+    </div>
+    <hr class="my-4">
+    <div class="row justify-content-center">
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="confirm-terms" name='confirm-terms' required>
+        <label class="form-check-label" for="confirm-terms">Potwierdzam zapoznanie się i zgodnę z <a href='{{ url_for('terms') }}'>regulaminem użytkowania</a></label>
+      </div>
+      <small id="termsErrorNotCheked" class="form-text text-danger" style="display: none;">
+        Aby korzystać z programu, konieczne jest zapoznanie się i zaakceptowanie regulaminu!
+      </small>
+    </div>
+    <div class="row justify-content-center">
+      <button class="w-100 btn btn-lg btn-primary m-2" type="button" onclick="formValidation()">Zarejestruj</button>
+    </div>
+    <hr class="my-4">
+    <p class="mt-5 mb-3 text-muted">Projekt Brokół &#x1F966; &copy; 2021-2022</p>
+  </form>
+</main>
+<script src="{{ url_for('static', filename='js/registerFormValidation.js') }}"></script>
+{% endblock content %}
