@@ -1,29 +1,23 @@
 from flask import render_template, url_for, flash, redirect, request
 from appData import app
 
-pageList = [
-        {'name': 'start', 'href': 'home'},
-        {'name': 'o projekcie', 'href': 'about'},
-        {'name': 'admin', 'href': 'admin'}
-    ]
-
 
 @app.route('/')
-@app.route('/home')
+@app.route('/home') #TODO
 def home():
-    return render_template('index.html', title='Start', pageList=pageList)
+    return render_template('index.html', title='Start')
 
 
 @app.route('/login')
 def login():
-    return render_template('login.html', title='Logowanie', pageList=pageList)
+    return render_template('login.html', title='Logowanie')
 
 
 @app.route('/register')
 def register():
-    return render_template('register.html', title='Rejestracja', pageList=pageList)
+    return render_template('register.html', title='Rejestracja')
 def register(message):
-    return render_template('register.html', title='Rejestracja', pageList=pageList, message=message)
+    return render_template('register.html', title='Rejestracja', message=message)
 
 
 @app.route('/register_proceed', methods=["POST"])
@@ -48,4 +42,4 @@ def admin():
 @app.route('/terms')
 def terms(*args):
     print('kurwaaa')
-    return redirect(url_for('register',title=args)) #TODO
+    return redirect(url_for('register', title=args)) #TODO

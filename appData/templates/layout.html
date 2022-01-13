@@ -21,6 +21,14 @@
             border-radius: 0.25rem;
             display: none;
           }
+          .nav-links{
+            transition: 0.8s;
+          }
+          .nav-links:hover {
+            border-color: #6c757d!important;
+            color: #212529;
+            transition: 0.8s;
+          }
         </style>
       </head>
     <body>
@@ -28,25 +36,41 @@
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
             <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 p-3 mb-4 border-bottom">
               <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
-                <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
+                <img class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap" src="{{ url_for('static', filename='img/broccoli.ico') }}"> Procject Broccoli
               </a>
 
               <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                  {% for page in pageList %}
-                    {% if page.name == title.lower() %}
-                  <li><a href="{{ url_for(page.href) }}" class="nav-link px-2 text-capitalize link-secondary">{{ page.name }}</a></li>
-                    {% else %}
-                  <li><a href="{{ url_for(page.href) }}" class="nav-link px-2 text-capitalize link-dark">{{ page.name }}</a></li>
-                    {% endif %}
-                  {% endfor %}
+                  <!-- TODO if user is logged -->
+                  <li>
+                      {% if title == 'Start' %}
+                      <a href="{{ url_for('home') }}" class="nav-link nav-links px-2 text-capitalize link-dark border-bottom border-secondary">
+                      {% else %}
+                      <a href="{{ url_for('home') }}" class="nav-link nav-links px-2 text-capitalize link-secondary border-bottom">
+                      {% endif %}
+                        Start
+                      </a>
+                  </li>
+                  <li>
+                      {% if title == 'O projekcie' %}
+                      <a href="{{ url_for('about') }}" class="nav-link nav-links px-2 text-capitalize link-dark border-bottom border-secondary">
+                      {% else %}
+                      <a href="{{ url_for('about') }}" class="nav-link nav-links px-2 text-capitalize link-secondary border-bottom">
+                      {% endif %}
+                          O projekcie
+                      </a>
+                  </li>
               </ul>
 
               <div class="col-md-3 text-end">
                 <a href="{{ url_for('login') }}">
-                    <button type="button" class="btn btn-outline-primary me-2">Zaloguj</button>
+                    <button type="button" class="btn btn-outline-primary me-2">
+                        Zaloguj
+                    </button>
                 </a>
                 <a href="{{ url_for('register') }}">
-                    <button type="button" class="btn btn-primary">Rejestracja</button>
+                    <button type="button" class="btn btn-primary">
+                        Rejestracja
+                    </button>
                 </a>
               </div>
           </header>
