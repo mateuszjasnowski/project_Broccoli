@@ -14,7 +14,7 @@
 </style>
     <div class="d-flex flex-row-reverse px-5">
         <div class="">
-            <a href="/">
+            <a href="{{ url_for('new_post') }}">
                 <button type="button" class="btn btn-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                         <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
@@ -25,23 +25,38 @@
     </div>
     <hr class="my-4">
     <div class="row justify-content-center px-5" style="width: 100%;">
+        {% if posts %}
         {% for post in posts %}
         <div class="col-md-4 post-hover">
             <a href="/{{ post.id }}" class="text-decoration-none text-body">
-              <div class="card mb-4 shadow-sm">
-                <img class="bd-placeholder-img card-img-top" height="100%" src="{{url_for('static',filename='photos/')}}{{ post.photo }}" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" >
-                <div class="card-body">
-                    <b class="card-text">{{ post.manufacture }} {{ post.model }}</b>
-                    <small class="text-muted"> {{ post.manufacture_year }} </small>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <p class="card-text post-price-after"> {{ post.price }}</p>
-                    <small class="text-muted">{{ post.date_posted }}</small>
-                  </div>
+                <div class="card mb-4 shadow-sm">
+                    <!--<div style="width: 100%;height: 180px;background-position: center;background-size: cover;background-image: url(/static/photos/{{ post.photo }});">
+                    </div>-->
+                    <img class="bd-placeholder-img card-img-top" width="340px" height='250px' src="{{url_for('static',filename='photos/')}}{{ post.photo }}" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" >
+                    <div class="card-body">
+                        <b class="card-text">{{ post.manufacture }} {{ post.model }}</b>
+                        <small class="text-muted"> {{ post.manufacture_year }} </small>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="card-text post-price-after"> {{ post.price }}</p>
+                            <small class="text-muted">{{ post.date_posted }}</small>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </a>
         </div>
         {% endfor %}
+        {% else %}
+        <section class="jumbotron text-center">
+            <div class="container">
+              <h1>Nic tutaj nie ma :(</h1>
+              <p class="lead text-muted">
+                    Możesz storzyć swoje ogłoszenie i być tutaj pierwszy!
+                <p>
+                <a href="{{ url_for('new_post') }}" class="btn btn-primary my-2">Dodaj ogłoszenie</a>
+              </p>
+            </div>
+          </section>
+        {% endif %}
     </div>
 
 

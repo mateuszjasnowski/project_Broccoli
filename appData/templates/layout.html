@@ -74,7 +74,21 @@
                 </a>
               </div>
           </header>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div style='cursor: pointer;' class="alert mx-5 alert-{{ category }}" onclick="closeOnClick(this);">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
         {% block content %}
         {% endblock %}
+        <script>
+          function closeOnClick(element){
+            $(element).css("display",'none');
+          }
+        </script>
     </body>
 </html>

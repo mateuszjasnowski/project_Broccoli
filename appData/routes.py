@@ -1,43 +1,12 @@
-from datetime import datetime #models
+ #models
 from flask import render_template, url_for, flash, redirect, request
 from appData import app, db, bcrypt
+#from appData.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
+from appData.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required #copy
 
 
-
-#db classess
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    login = db.Column(db.String(30), unique=True, nullable=False)
-    firstname = db.Column(db.String(30))
-    lastname = db.Column(db.String(30))
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(90), nullable=False)
-    role = db.Column(db.String(30), default='User')
-    posts = db.relationship('Post', backref='author', lazy=True)
-
-    def __repr__(self):
-        return f"User('{self.login}', '{self.firstname}', '{self.lastname}', '{self.email}', '{self.role}')"
-
-
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    author = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    manufacture = db.Column(db.String(100), nullable=False)
-    model = db.Column(db.String(100))
-    manufacture_year = db.Column(db.String(4))
-    photo = db.Column(db.String(30), nullable=False, default='defaultCar.jpg')
-    description = db.Column(db.Text),
-    price = db.Column(db.Integer(), nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-
-    def __repr__(self):
-        return f"Post('{self.id}','{self.author}','{self.manufacture}','{self.model}','{self.manufacture_year}','{self.photo}','{self.description}','{self.price}','{self.date_posted}')"
-
-
-
-
-posts = [
+'''posts = [
     {
         'id': 1,
         'author': "Jan Kowalski",
@@ -77,7 +46,7 @@ posts = [
         'manufacture': 'Benfactor',
         'model': 'Shafter',
         'manufacture_year': '2012',
-        'photo': 'shafter.jfif',
+        'photo': 'defaultCar.jpg',
         'description': 'This is a car from GTA V',
         'price': 12000,
         'date_posted': 'April 21, 2018'
@@ -99,7 +68,7 @@ posts = [
         'manufacture': 'Benfactor',
         'model': 'Shafter',
         'manufacture_year': '2012',
-        'photo': 'shafter.jfif',
+        'photo': 'defaultCar.jpg',
         'description': 'This is a car from GTA V',
         'price': 12000,
         'date_posted': 'April 21, 2018'
@@ -110,7 +79,7 @@ posts = [
         'manufacture': 'Benfactor',
         'model': 'Shafter',
         'manufacture_year': '2012',
-        'photo': 'shafter.jfif',
+        'photo': 'defaultCar.jpg',
         'description': 'This is a car from GTA V',
         'price': 12000,
         'date_posted': 'April 21, 2018'
@@ -159,14 +128,39 @@ posts = [
         'price': 12000,
         'date_posted': 'April 21, 2018'
     }
-]
+]'''
+
+class BroccoliRegisterForm:
+    def __init__(self, username, firstName, lastName, email, password):
+        self.username = username
+        self.firstName = firstName
+        self.lastName = lastName
+        self.email = email
+        self.password = password
+
+
+    def isUsernameUsed(self):
+        user = User.query.filter_by(login=self.username).first()
+        if user:
+            return False
+        else:
+            return True
+
+
+    def isEmailUsed(self):
+        email = User.query.filter_by(email=self.email).first()
+        if email:
+            return False
+        else:
+            return True
 
 
 
 #side routes
 @app.route('/')
-@app.route('/home') #TODO
+@app.route('/home')
 def home():
+    posts = Post.query.all()
     return render_template('index.html', title='Start', posts = posts)
 
 
@@ -175,20 +169,31 @@ def login():
     return render_template('login.html', title='Logowanie')
 
 
-@app.route('/register')
+@app.route('/register', methods=["POST","GET"])
 def register():
+    '''
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    '''
     return render_template('register.html', title='Rejestracja')
-def register(message):
-    return render_template('register.html', title='Rejestracja', message=message)
-
 
 @app.route('/register_proceed', methods=["POST"])
 def register_proceed():
-    formData = request.form.get('login')
-    if formData == '123':
-        return redirect(url_for('register', message='Email already used'))
+    formData = BroccoliRegisterForm(request.form.get('login'),request.form.get('userFirstName'),request.form.get('userLastName'),request.form.get('email'),request.form.get('password'))
+    if formData.isUsernameUsed():
+        if formData.isEmailUsed():
+            hashed_password = bcrypt.generate_password_hash(formData.password).decode('utf-8')
+            user = User(login=formData.username, firstname=formData.firstName, lastname=formData.lastName, email=formData.email, password=hashed_password)
+            db.session.add(user)
+            db.session.commit()
+            flash('Your account has been created! You are now able to log in', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('Istnieje już konto z podanym adresem email.','danger')
+            return redirect(url_for('login'))
     else:
-        return formData
+        flash('Użytkownik o podanym loginie już istnieje. Wybierz inny login.','danger')
+        return redirect(url_for('register'))
 
 
 @app.route('/about')
@@ -204,3 +209,8 @@ def admin():
 @app.route('/terms')
 def terms():
     return 'Terms' #TODO
+
+
+@app.route('/new_post')
+def new_post():
+    return 'Soon TM' #TODO
