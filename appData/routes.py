@@ -6,130 +6,6 @@ from appData.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required #copy
 
 
-'''posts = [
-    {
-        'id': 1,
-        'author': "Jan Kowalski",
-        'manufacture': 'Benfactor',
-        'model': 'Shafter',
-        'manufacture_year': '2012',
-        'photo': 'shafter.jfif',
-        'description': 'This is a car from GTA V',
-        'price': 12000,
-        'date_posted': 'April 21, 2018'
-    },
-    {
-        'id': 2,
-        'author': "roman",
-        'manufacture': 'Benfactor',
-        'model': 'Shafter',
-        'manufacture_year': '2012',
-        'photo': 'shafter.jfif',
-        'description': 'This is a car from GTA V',
-        'price': 12000,
-        'date_posted': 'April 21, 2018'
-    },
-        {
-        'id': 1,
-        'author': "Jan Kowalski",
-        'manufacture': 'Benfactor',
-        'model': 'Shafter',
-        'manufacture_year': '2012',
-        'photo': 'shafter.jfif',
-        'description': 'This is a car from GTA V',
-        'price': 12000,
-        'date_posted': 'April 21, 2018'
-    },
-    {
-        'id': 2,
-        'author': "roman",
-        'manufacture': 'Benfactor',
-        'model': 'Shafter',
-        'manufacture_year': '2012',
-        'photo': 'defaultCar.jpg',
-        'description': 'This is a car from GTA V',
-        'price': 12000,
-        'date_posted': 'April 21, 2018'
-    },
-        {
-        'id': 1,
-        'author': "Jan Kowalski",
-        'manufacture': 'Benfactor',
-        'model': 'Shafter',
-        'manufacture_year': '2012',
-        'photo': 'shafter.jfif',
-        'description': 'This is a car from GTA V',
-        'price': 12000,
-        'date_posted': 'April 21, 2018'
-    },
-    {
-        'id': 1,
-        'author': "Jan Kowalski",
-        'manufacture': 'Benfactor',
-        'model': 'Shafter',
-        'manufacture_year': '2012',
-        'photo': 'defaultCar.jpg',
-        'description': 'This is a car from GTA V',
-        'price': 12000,
-        'date_posted': 'April 21, 2018'
-    },
-    {
-        'id': 2,
-        'author': "roman",
-        'manufacture': 'Benfactor',
-        'model': 'Shafter',
-        'manufacture_year': '2012',
-        'photo': 'defaultCar.jpg',
-        'description': 'This is a car from GTA V',
-        'price': 12000,
-        'date_posted': 'April 21, 2018'
-    },
-        {
-        'id': 1,
-        'author': "Jan Kowalski",
-        'manufacture': 'Benfactor',
-        'model': 'Shafter',
-        'manufacture_year': '2012',
-        'photo': 'shafter.jfif',
-        'description': 'This is a car from GTA V',
-        'price': 12000,
-        'date_posted': 'April 21, 2018'
-    },
-    {
-        'id': 2,
-        'author': "roman",
-        'manufacture': 'Benfactor',
-        'model': 'Shafter',
-        'manufacture_year': '2012',
-        'photo': 'shafter.jfif',
-        'description': 'This is a car from GTA V',
-        'price': 12000,
-        'date_posted': 'April 21, 2018'
-    },
-        {
-        'id': 1,
-        'author': "Jan Kowalski",
-        'manufacture': 'Benfactor',
-        'model': 'Shafter',
-        'manufacture_year': '2012',
-        'photo': 'shafter.jfif',
-        'description': 'This is a car from GTA V',
-        'price': 12000,
-        'date_posted': 'April 21, 2018'
-    },
-    {
-        'id': 2,
-        'author': "roman",
-        'manufacture': 'Benfactor',
-        'model': 'Shafter',
-        'manufacture_year': '2012',
-        'photo': 'shafter.jfif',
-        'description': 'This is a car from GTA V',
-        'price': 12000,
-        'date_posted': 'April 21, 2018'
-    }
-]'''
-
 class BroccoliRegisterForm:
     def __init__(self, username, firstName, lastName, email, password):
         self.username = username
@@ -154,7 +30,18 @@ class BroccoliRegisterForm:
         else:
             return True
 
+class BroccoliLoginForm:
+    def __init__(self, username, password, rememberMe):
+        self.username = username
+        self.password = password
+        self.rememberMe = rememberMe
 
+    def isUsernameUsed(self):
+        user = User.query.filter_by(login=self.username).first()
+        if user:
+            return True
+        else:
+            return False
 
 #side routes
 @app.route('/')
@@ -166,15 +53,37 @@ def home():
 
 @app.route('/login')
 def login():
-    return render_template('login.html', title='Logowanie')
-
-
-@app.route('/register', methods=["POST","GET"])
-def register():
-    '''
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    '''
+    return render_template('login.html', title='Logowanie')
+
+@app.route('/login_proceed', methods=["POST"])
+def login_proceed():
+    formData = BroccoliLoginForm(request.form.get('login'),request.form.get('password'),request.form.get('remember-me'))
+    if formData.isUsernameUsed():
+        user = User.query.filter_by(login=formData.username).first()
+        if user and bcrypt.check_password_hash(user.password, formData.password):
+            login_user(user, remember=formData.rememberMe)
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('home'))
+        else:
+            #flash(user.password,'danger')
+            flash('Błędny login lub hasło.', 'danger')
+            return redirect(url_for('login'))
+    flash('Konto o podanym loginie nie istnieje. Spróbuj inny login lub zarejestruj konto', 'danger')
+    return redirect(url_for('login')) #TODO reset password
+
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+
+@app.route('/register')
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     return render_template('register.html', title='Rejestracja')
 
 @app.route('/register_proceed', methods=["POST"])
@@ -212,5 +121,6 @@ def terms():
 
 
 @app.route('/new_post')
+@login_required
 def new_post():
     return 'Soon TM' #TODO

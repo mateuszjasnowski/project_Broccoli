@@ -60,19 +60,33 @@
                       </a>
                   </li>
               </ul>
-
+              {% if current_user.is_authenticated %}
               <div class="col-md-3 text-end">
                 <a href="{{ url_for('login') }}">
                     <button type="button" class="btn btn-outline-primary me-2">
-                        Zaloguj
+                        {{ current_user.login }}
                     </button>
                 </a>
-                <a href="{{ url_for('register') }}">
-                    <button type="button" class="btn btn-primary">
-                        Rejestracja
+                <a href="{{ url_for('logout') }}">
+                    <button type="button" class="btn btn-secondary">
+                        Wyloguj
                     </button>
                 </a>
               </div>
+              {% else %}
+                <div class="col-md-3 text-end">
+                  <a href="{{ url_for('login') }}">
+                      <button type="button" class="btn btn-outline-primary me-2">
+                          Zaloguj
+                      </button>
+                  </a>
+                  <a href="{{ url_for('register') }}">
+                      <button type="button" class="btn btn-primary">
+                          Rejestracja
+                      </button>
+                  </a>
+                </div>
+              {% endif %}
           </header>
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
