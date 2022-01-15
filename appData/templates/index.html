@@ -28,7 +28,7 @@
         {% if posts %}
         {% for post in posts %}
         <div class="col-md-4 post-hover">
-            <a href="/{{ post.id }}" class="text-decoration-none text-body">
+            <a href="/post/{{ post.id }}" class="text-decoration-none text-body">
                 <div class="card mb-4 shadow-sm">
                     <img class="bd-placeholder-img card-img-top" width="340px" height='250px' src="{{url_for('static',filename='photos/')}}{{ post.photo }}" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" >
                     <div class="card-body">

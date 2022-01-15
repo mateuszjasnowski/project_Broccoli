@@ -1,4 +1,6 @@
 from datetime import datetime
+import secrets
+from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
 from appData import app, db, bcrypt
 #from appData.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
@@ -45,7 +47,7 @@ class BroccoliLoginForm:
 
 
 class BroccoliNewPostForm:
-    def __init__(self, manufacture, model, manufacture_year, price, photo, description, author, date_posted): #author = user_id
+    def __init__(self, manufacture, model, manufacture_year, price, photo, description, author): #author = user_id
         self.manufacture = manufacture
         self.model = model
         self.manufacture_year = manufacture_year
@@ -53,7 +55,7 @@ class BroccoliNewPostForm:
         self.photo = photo
         self.description = description
         self.author = author
-        self.date_posted = date_posted
+    #TODO form validation
 
 
 #side routes
@@ -139,7 +141,38 @@ def new_post():
     thisYear = int(datetime.now().strftime("%Y"))
     return render_template('new_post.html', title='Dodaj ogłoszenie', current_year=thisYear)
 
+
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/cars_pics', picture_fn)
+
+    output_size = (340, 250)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+
+    return picture_fn
+
+
 @app.route('/post/new_post_publish', methods=["POST"])
 @login_required
 def new_post_publish():
-    return 'Hello'
+    formData = BroccoliNewPostForm(request.form.get('manufacture'),request.form.get('model'),request.form.get('manufacture_year'),request.form.get('price'),request.form.get('photo'),request.form.get('description'),current_user.id)
+    #TODO form validation placeholder
+    #if formData.photo:
+        #carPhoto = save_picture(formData.photo)
+        #post = Post(user_id=formData.author, manufacture=formData.manufacture, model=formData.model, manufacture_year=formData.manufacture_year, photo=carPhoto, description=formData.description, price=formData.price)
+    #else:
+    post = Post(user_id=formData.author, manufacture=formData.manufacture, model=formData.model, manufacture_year=formData.manufacture_year, description=formData.description, price=formData.price)
+    db.session.add(post)
+    db.session.commit()
+    flash('Utworzono nowe głoszenie !','success')
+    return redirect(url_for('home'))
+
+
+@app.route("/post/<int:post_id>")
+def post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('post.html', post=post)
