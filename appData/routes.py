@@ -1,4 +1,4 @@
- #models
+from datetime import datetime
 from flask import render_template, url_for, flash, redirect, request
 from appData import app, db, bcrypt
 #from appData.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
@@ -43,6 +43,19 @@ class BroccoliLoginForm:
         else:
             return False
 
+
+class BroccoliNewPostForm:
+    def __init__(self, manufacture, model, manufacture_year, price, photo, description, author, date_posted): #author = user_id
+        self.manufacture = manufacture
+        self.model = model
+        self.manufacture_year = manufacture_year
+        self.price = price
+        self.photo = photo
+        self.description = description
+        self.author = author
+        self.date_posted = date_posted
+
+
 #side routes
 @app.route('/')
 @app.route('/home')
@@ -57,7 +70,7 @@ def login():
         return redirect(url_for('home'))
     return render_template('login.html', title='Logowanie')
 
-@app.route('/login_proceed', methods=["POST"])
+@app.route('/login_proceed', methods=["POST","GET"])
 def login_proceed():
     formData = BroccoliLoginForm(request.form.get('login'),request.form.get('password'),request.form.get('remember-me'))
     if formData.isUsernameUsed():
@@ -120,7 +133,13 @@ def terms():
     return 'Terms' #TODO
 
 
-@app.route('/new_post')
+@app.route('/post/new_post')
 @login_required
 def new_post():
-    return 'Soon TM' #TODO
+    thisYear = int(datetime.now().strftime("%Y"))
+    return render_template('new_post.html', title='Dodaj ogłoszenie', current_year=thisYear)
+
+@app.route('/post/new_post_publish', methods=["POST"])
+@login_required
+def new_post_publish():
+    return 'Hello'
