@@ -1,4 +1,5 @@
 from datetime import datetime
+from pydoc import apropos
 import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
@@ -176,3 +177,22 @@ def new_post_publish():
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', post=post)
+
+@app.route('/post/<int:post_id>/edit')
+@login_required
+def edit_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    thisYear = int(datetime.now().strftime("%Y"))
+    if current_user.id == post.author.id:
+        return render_template('edit_post.html', post=post,  current_year=thisYear)
+    else:
+        flash('Nie możesz edytować ogłoszenia które nie jest twoje!','warning')
+        return redirect(url_for('home'))
+        #return redirect(url_for('/post/<int:post_id>')) #TODO
+
+
+@app.route('/user/<int:user_id>')
+@login_required
+def user(user_id):
+    user = User.query.get_or_404(user_id)
+    return user.__dict__ #TODO

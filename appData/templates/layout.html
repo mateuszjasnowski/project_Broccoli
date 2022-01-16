@@ -29,6 +29,16 @@
             color: #212529;
             transition: 0.8s;
           }
+          .post-price-after::after{
+              content: ' PLN';
+          }
+          .post-hover{
+              transition: 0.8s;
+          }
+          .post-hover:hover{
+              transform: scale(1.05);
+              transition: 0.8s;
+          }
         </style>
       </head>
     <body>
@@ -62,7 +72,7 @@
               </ul>
               {% if current_user.is_authenticated %}
               <div class="col-md-3 text-end">
-                <a href="{{ url_for('login') }}">
+                <a href="/user/{{ current_user.id }}">
                     <button type="button" class="btn btn-outline-primary me-2">
                         {{ current_user.login }}
                     </button>

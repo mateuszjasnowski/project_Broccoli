@@ -1,17 +1,5 @@
 {% extends "layout.html" %}
 {% block content %}
-<style>
-    .post-price-after::after{
-        content: ' PLN';
-    }
-    .post-hover{
-        transition: 0.8s;
-    }
-    .post-hover:hover{
-        transform: scale(1.05);
-        transition: 0.8s;
-    }
-</style>
     <div class="d-flex flex-row-reverse px-5">
         <div class="">
             <a href="{{ url_for('new_post') }}">
