@@ -7,10 +7,10 @@
   <div class="row g-5 justify-content-center" style="width: 100%;">
     <div class="col-md-7 col-lg-8">
       <h4 class="mb-3">Dane pojazdu</h4>
-      <form class="needs-validation" action="{{ url_for('new_post_publish') }}" method="post">
+      <form class="needs-validation" action="{{ url_for('new_post_publish') }}" method="post" enctype=multipart/form-data>
         <div class="row g-3">
           <div class="col-sm-6">
-            <label for="manufacture" class="form-label">Marka</label>
+            <label for="manufacture" class="form-label form-field-required">Marka</label>
             <input type="text" class="form-control" id="manufacture" name="manufacture" placeholder="np. Volkswagen" required>
           </div>
           <div class="col-sm-6">
@@ -20,7 +20,7 @@
         </div>
         <div class="row g-3">
           <div class="col-sm-4">
-            <label for="manufacture_year" class="form-label">Rok produkcji</label>
+            <label for="manufacture_year" class="form-label form-field-required">Rok produkcji</label>
             <select class="form-control" id="manufacture_year" name="manufacture_year" required>
                 <option disabled selected value>
                     Wybierz
@@ -31,7 +31,7 @@
             </select>
           </div>
           <div class="col-sm-4">
-            <label for="price" class="form-label">Cena</label>
+            <label for="price" class="form-label form-field-required">Cena</label>
             <div class="input-group has-validation">
                 <input type="number" class="form-control" id="price" name="price" placeholder="np. 35500" required>
                 <span class="input-group-text">PLN</span>
@@ -48,6 +48,7 @@
             <textarea class="form-control" id="description" name="description" style="height: 320px;"></textarea>
           </div>
         </div>
+        <small class="form-text text-danger">* - Pole wymagane</small>
         <div class="row g-3 mt-2 justify-content-end">
           <button class="w-15 btn btn-primary btn-lg" type="submit">Dodaj ogłoszenie</button>
         </div>

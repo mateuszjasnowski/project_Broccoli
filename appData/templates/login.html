@@ -2,7 +2,10 @@
 {% block content %}
 <link href="{{ url_for('static',filename='/css/signin.css') }}" rel="stylesheet">
     <main class="form-signin">
-  <form method="post" action=" {{ url_for('login_proceed') }} ">
+      <form method="post" action=" {{ url_for('login_proceed') }} ">
+        {% if next_page %}
+        <input type="text" class="d-none" value="{{ next_page }}" name="next_page">
+        {% endif %}
     <img class="mb-4" src="{{ url_for('static',filename='/img/broccoli.ico') }}" alt="" width="72" height="57">
     {% if request.args.get('message') %}
     <div class="formErrorMessage" style="display: block">
@@ -31,6 +34,9 @@
       </label>
     </div>
     <button class="w-100 btn btn-lg btn-primary" type="submit">Zaloguj</button>
+    <a href="/home">
+      Zapomniałem hasło <!-- TODO -->
+    </a>
     <p class="mt-5 mb-3 text-muted">Projekt Brokół &#x1F966; &copy; 2021-2022</p>
   </form>
 </main>

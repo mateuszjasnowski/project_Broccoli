@@ -39,6 +39,10 @@
               transform: scale(1.05);
               transition: 0.8s;
           }
+          .form-field-required::after{
+            content: '*';
+            color: #f00;
+          }
         </style>
       </head>
     <body>
@@ -72,6 +76,13 @@
               </ul>
               {% if current_user.is_authenticated %}
               <div class="col-md-3 text-end">
+                {% if current_user.role == 'Admin' %}
+                <a href="{{ url_for('admin_panel')}}"> <!-- TODO -->
+                  <button type="button" class="btn btn-outline-success me-2">
+                    Panel administratora
+                  </button>
+                </a>
+                {% endif %}
                 <a href="/user/{{ current_user.id }}">
                     <button type="button" class="btn btn-outline-primary me-2">
                         {{ current_user.login }}

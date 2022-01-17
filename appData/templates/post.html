@@ -10,7 +10,7 @@
                     <a href="/post/{{ post.id }}/edit">
                         <button type="button" class="btn btn-primary m-1">Edytuj</button>
                     </a>
-                    <button type="button" class="btn btn-danger m-1">Zamknij</button>
+                    <button type="button" class="btn btn-danger m-1" onclick="modalToogle('Open');">Zamknij</button>
                 </div>
                 <div class="modal modal-alert position-absolute d-block bg-secondary py-5 d-none" style="--bs-bg-opacity: .7;" tabindex="-1" role="dialog" id="modalChoice"> <!-- Delete confirmation -->
                     <div class="modal-dialog" role="document">
@@ -20,8 +20,8 @@
                           <p class="mb-0">Ogłoszenie zostanie zarchiwizowane.</p>
                         </div>
                         <div class="modal-footer flex-nowrap p-0">
-                          <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-right text-danger"><strong>Tak. zamknij</strong></button>
-                          <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal">Nie</button>
+                            <button type="button" onclick="window.location.href='/post/{{ post.id }}/delete'" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-right text-danger" onclick=""><strong>Tak</strong></button>
+                            <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal" onclick="modalToogle('Close');">Nie</button>
                         </div>
                       </div>
                     </div>
@@ -49,31 +49,55 @@
                 </h4>
                 <ul class="list-group mb-3">
                     <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            {% if post.author.firstname %}
-                            <h6 class="my-0"> {{ post.author.firstname }} {{ post.author.lastname }}</h6>
-                            <small class="text-muted">{{ post.author.login }}</small>
-                            {% else %}
-                            <h6 class="my-0"> {{ post.author.login }}</h6>
-                            {% endif %}
-                        </div>
+                        <a href="/user/{{ post.author.id }}" class="text-decoration-none text-dark">
+                            <div>
+                                {% if post.author.firstname %}
+                                <h6 class="my-0"> {{ post.author.firstname }} {{ post.author.lastname }}</h6>
+                                <small class="text-muted">{{ post.author.login }}</small>
+                                {% else %}
+                                <h6 class="my-0"> {{ post.author.login }}</h6>
+                                {% endif %}
+                            </div>
+                        </a>
                     </li>
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div>
                             <small class="text-muted">Adres email</small>
-                            <a href="mailto:{{ post.author.email }}">
+                            {% if current_user.is_authenticated %}
+                            <h6 class='my-0' id='mail_censored'>
+                                {{ post.author.email[0] }}
+                                {% for letter in post.author.email[1:] %}
+                                    {% if letter == '@' %}
+                                    @
+                                    {% else %}
+                                    *
+                                    {% endif %}
+                                {% endfor %}
+                            </h6>
+                            <a href="mailto:{{ post.author.email }}" class="d-none" id='email_hidden'>
                                 <h6 class="my-0">{{ post.author.email }}</h6>
                             </a>
+                            {% else %}
+                                <h6 class="my-0">
+                                    Zaloguj się aby mieć dostęp do danych kontaktowych.
+                                </h6>
+                            {% endif %}
                         </div>
                     </li>
                 </ul>
                 <div class="input-group">
-                    <button type="button" class="btn btn-secondary">Pokaż kontakt</button> <!-- TODO JS -->
+                    {% if current_user.is_authenticated %}
+                    <button type="button" class="btn btn-secondary" onclick="showEmail();" id="show_contact_btn">Pokaż kontakt</button>
+                    {% else %}
+                    <a href="{{ url_for('login') }}?next=/post/{{ post.id }}">
+                        <button type="button" class="btn btn-primary">Zaloguj się</button>
+                    </a>
+                {% endif %}
                 </div>
             </div>
             <!-- Left col -->
             <div class="col-md-7 col-lg-8">
-                <img src="/static/photos/{{ post.photo }}" width="100%">
+                <img src="/static/photos/{{ post.photo }}" width="850px" height="450px">
                 <hr class="my-4">
                 <h4 class="mb-3">{{ post.manufacture }} {{ post.model }}</h4>
                 <div class="row g-3">
@@ -89,4 +113,20 @@
         </div>
     </main>
 </div>
+<script>
+    function showEmail(){
+        console.log('test');
+        $('#show_contact_btn').addClass('d-none');
+        $('#mail_censored').addClass('d-none');
+        $('#email_hidden').removeClass('d-none');
+    }
+    function modalToogle(action){
+        if (action == 'Open'){
+            $('#modalChoice').removeClass('d-none');
+        }
+        else if(action == 'Close'){
+            $('#modalChoice').addClass('d-none');
+        }
+    }
+</script>
 {% endblock content %}
