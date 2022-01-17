@@ -35,7 +35,6 @@ function formValidation(){
                         if(isEmptyVerification($('#passwordConfirm'),$('#passwordErrorEmpty'))){
                             if(pairVerification($('#password'),$('#passwordConfirm'),$('#passwordErrorNotIdentical'))){
                                 if($('#confirm-terms').is(':checked')){
-                                    console.log('submit');
                                     $('#register-form').submit();
                                 }
                                 else{
@@ -49,4 +48,17 @@ function formValidation(){
             }else{return}
         }else{return}
     }else{return}
+}
+
+function EditUserFormValidation(){
+    if (isEmptyVerification($('#login'),$('#loginErrorEmpty'))){
+        if (isEmptyVerification($('#email'),$('#emailErrorEmpty'))){
+            if(pairVerification($('#newPassword'),$('#newPasswordConfirm'),$('#passwordErrorNotIdentical'))){
+                console.log('submit');
+            }
+            else{return}
+        }
+        else{return}
+    }
+    else{return}
 }

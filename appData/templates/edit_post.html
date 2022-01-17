@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="py-5 text-center">
+    <h2>Edytuj ogłoszenie</h2>
+  </div>
+
+  <div class="row g-5 justify-content-center" style="width: 100%;">
+    <div class="col-md-7 col-lg-8">
+      <h4 class="mb-3">Dane pojazdu</h4>
+      <form class="needs-validation" action="{{ url_for('new_post_publish') }}" method="post">
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <label for="manufacture" class="form-label form-field-required">Marka</label>
+            <input type="text" class="form-control" id="manufacture" name="manufacture" value="{{ post.manufacture }}" required>
+          </div>
+          <div class="col-sm-6">
+            <label for="model" class="form-label">Model</label>
+            <input type="text" class="form-control" id="model" name="model" value="{{ post.model }}"  >
+          </div>
+        </div>
+        <div class="row g-3">
+          <div class="col-sm-4">
+            <label for="manufacture_year" class="form-label form-field-required">Rok produkcji</label>
+            <select class="form-control" id="manufacture_year" name="manufacture_year" required>
+                <option disabled selected value>
+                    Wybierz
+                </option>
+                {% for year in range(current_year , 1899, -1 ) %} <!-- TODO -->
+                <option>{{ year }}</option>
+                {% endfor %}
+            </select>
+          </div>
+          <div class="col-sm-4">
+            <label for="price" class="form-label form-field-required">Cena</label>
+            <div class="input-group has-validation">
+                <input type="number" class="form-control" id="price" name="price" value="{{ post.price }}" required>
+                <span class="input-group-text">PLN</span>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <label for="photo" class="form-label">Zdjęcie</label>
+            <input type="file" class="form-control" id="photo" name="photo"> <!-- TODO set allowed formats -->
+          </div>
+        </div>
+        <div class="row g-3">
+          <div class="col-sm-12">
+            <label for="description" class="form-label">Opis</label>
+            <textarea class="form-control" id="description" name="description" style="height: 320px;">{{ post.description }}</textarea>
+          </div>
+        </div>
+        <small class="form-text text-danger">* - Pole wymagane</small>
+        <div class="row g-3 mt-2 justify-content-end">
+          <button class="w-15 btn btn-primary btn-lg" type="submit">Wprowadź zmiany</button>
+        </div>
+        <!--
+            <div class="col-sm-3">
+        </div>
+        -->
+      </form>
+    </div>
+  </div>
+{% endblock content %}

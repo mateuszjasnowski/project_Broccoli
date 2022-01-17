@@ -1,17 +1,5 @@
 {% extends "layout.html" %}
 {% block content %}
-<style>
-    .post-price-after::after{
-        content: ' PLN';
-    }
-    .post-hover{
-        transition: 0.8s;
-    }
-    .post-hover:hover{
-        transform: scale(1.05);
-        transition: 0.8s;
-    }
-</style>
     <div class="d-flex flex-row-reverse px-5">
         <div class="">
             <a href="{{ url_for('new_post') }}">
@@ -28,17 +16,15 @@
         {% if posts %}
         {% for post in posts %}
         <div class="col-md-4 post-hover">
-            <a href="/{{ post.id }}" class="text-decoration-none text-body">
+            <a href="/post/{{ post.id }}" class="text-decoration-none text-body">
                 <div class="card mb-4 shadow-sm">
-                    <!--<div style="width: 100%;height: 180px;background-position: center;background-size: cover;background-image: url(/static/photos/{{ post.photo }});">
-                    </div>-->
                     <img class="bd-placeholder-img card-img-top" width="340px" height='250px' src="{{url_for('static',filename='photos/')}}{{ post.photo }}" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" >
                     <div class="card-body">
                         <b class="card-text">{{ post.manufacture }} {{ post.model }}</b>
                         <small class="text-muted"> {{ post.manufacture_year }} </small>
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="card-text post-price-after"> {{ post.price }}</p>
-                            <small class="text-muted">{{ post.date_posted }}</small>
+                            <small class="text-muted">{{ post.date_posted.date() }}</small>
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <main>
+        <div class="row g-5">
+        <!-- right panel -->
+        <div class="col-md-5 col-lg-4 order-md-last">
+                {% if current_user == post.author %}
+                <div class="input-group">
+                    <a href="/post/{{ post.id }}/edit">
+                        <button type="button" class="btn btn-primary m-1">Edytuj</button>
+                    </a>
+                    <button type="button" class="btn btn-danger m-1">Zamknij</button>
+                </div>
+                <div class="modal modal-alert position-absolute d-block bg-secondary py-5 d-none" style="--bs-bg-opacity: .7;" tabindex="-1" role="dialog" id="modalChoice"> <!-- Delete confirmation -->
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content rounded-4 shadow">
+                        <div class="modal-body p-4 text-center">
+                          <h5 class="mb-0">Czy napewno chcesz zamknąć te ogłoszenie ?</h5>
+                          <p class="mb-0">Ogłoszenie zostanie zarchiwizowane.</p>
+                        </div>
+                        <div class="modal-footer flex-nowrap p-0">
+                          <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-right text-danger"><strong>Tak. zamknij</strong></button>
+                          <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal">Nie</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-primary">Szczegóły ogłoszenia</span>
+                </h4>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <small class="text-muted">Cena</small>
+                            <h6 class="my-0 post-price-after">{{ post.price }}</h6>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <small class="text-muted">Dodano</small>
+                            <h6 class="my-0">{{ post.date_posted.replace(microsecond=0) }}</h6>
+                        </div>
+                    </li>
+                </ul>
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-primary">Sprzedający</span>
+                </h4>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <a href="/user/{{ post.author.id }}" class="text-decoration-none text-dark">
+                            <div>
+                                {% if post.author.firstname %}
+                                <h6 class="my-0"> {{ post.author.firstname }} {{ post.author.lastname }}</h6>
+                                <small class="text-muted">{{ post.author.login }}</small>
+                                {% else %}
+                                <h6 class="my-0"> {{ post.author.login }}</h6>
+                                {% endif %}
+                            </div>
+                        </a>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <small class="text-muted">Adres email</small>
+                            {% if current_user.is_authenticated %}
+                            <h6 class='my-0' id='mail_censored'>
+                                {{ post.author.email[0] }}
+                                {% for letter in post.author.email[1:] %}
+                                    {% if letter == '@' %}
+                                    @
+                                    {% else %}
+                                    *
+                                    {% endif %}
+                                {% endfor %}
+                            </h6>
+                            <a href="mailto:{{ post.author.email }}" class="d-none" id='email_hidden'>
+                                <h6 class="my-0">{{ post.author.email }}</h6>
+                            </a>
+                            {% else %}
+                                <h6 class="my-0">
+                                    Zaloguj się aby mieć dostęp do danych kontaktowych.
+                                </h6>
+                            {% endif %}
+                        </div>
+                    </li>
+                </ul>
+                <div class="input-group">
+                    {% if current_user.is_authenticated %}
+                    <button type="button" class="btn btn-secondary" onclick="showEmail();" id="show_contact_btn">Pokaż kontakt</button>
+                    {% else %}
+                    <a href="{{ url_for('login') }}?next=/post/{{ post.id }}">
+                        <button type="button" class="btn btn-primary">Zaloguj się</button>
+                    </a>
+                {% endif %}
+                </div>
+            </div>
+            <!-- Left col -->
+            <div class="col-md-7 col-lg-8">
+                <img src="/static/photos/{{ post.photo }}" width="100%">
+                <hr class="my-4">
+                <h4 class="mb-3">{{ post.manufacture }} {{ post.model }}</h4>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label for="firstName" class="form-label">Opis</label>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <textarea style="min-height: 200px; resize: none;" disabled>{{ post.description }}</textarea>
+                </div>
+                <hr class="my-4">
+            </div>
+        </div>
+    </main>
+</div>
+<script>
+    function showEmail(){
+        console.log('test');
+        $('#show_contact_btn').addClass('d-none');
+        $('#mail_censored').addClass('d-none');
+        $('#email_hidden').removeClass('d-none');
+    }
+</script>
+{% endblock content %}

@@ -32,6 +32,7 @@ class Post(db.Model):
     description = db.Column(db.Text)
     price = db.Column(db.Integer(), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    #status = db.Column(db.String(10), default='published') #TODO
 
     def __repr__(self):
         return f"Post('{self.id}','{self.author}','{self.manufacture}','{self.model}','{self.manufacture_year}','{self.photo}','{self.description}','{self.price}','{self.date_posted}')"

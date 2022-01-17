@@ -10,6 +10,7 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app) #copy
 login_manager = LoginManager(app) #copy
 login_manager.login_view = 'login' #copy
+login_manager.login_message = 'Musisz być zalogowany aby otrzymać dostęp do tej strony!'
 login_manager.login_message_category = 'info' #copy
 
 from appData import routes

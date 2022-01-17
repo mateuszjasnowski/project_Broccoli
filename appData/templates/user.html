@@ -1,0 +1,140 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <main>
+      <div class="row g-5">
+        <div class="col-md-12 col-lg-12 order-md-last">
+            {% if current_user.id == user.id %}
+            <ul class="list-group mb-3">
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <div>
+                        <small class="text-muted">Login</small>
+                        <h6 class="my-0">{{ user.login }}</h6>
+                    </div>
+                    <div>
+                        <a href="/user/{{ user.id }}/edit">
+                            <button type="button" class="btn btn-primary">
+                                Edytuj
+                            </button>
+                        </a>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <div>
+                        <small class="text-muted">Imię i nazwisko</small>
+                        {% if user.firstname %}
+                        <h6 class="my-0">{{ user.firstname }} {{ user.lastname }}</h6>
+                        {% else %}
+                        <h6 class="my-0">
+                            ---
+                        </h6>
+                        {% endif %}
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <div>
+                        <small class="text-muted">Email</small>
+                        <h6 class="my-0">{{ user.email }}</h6>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <div>
+                        <small class="text-muted">Hasło</small>
+                        <h6 class="my-0">
+                            ********
+                        </h6>
+                    </div>
+                </li>
+            </ul>
+            {% else %}
+            <ul class="list-group mb-3">
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <div>
+                        <small class="text-muted">Login</small>
+                        <h6 class="my-0">{{ user.login }}</h6>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <div>
+                        <small class="text-muted">Imię i nazwisko</small>
+                        {% if user.firstname %}
+                        <h6 class="my-0">{{ user.firstname }} {{ user.lastname }}</h6>
+                        {% else %}
+                        <h6 class="my-0">
+                            ---
+                        </h6>
+                        {% endif %}
+                    </div>
+                </li>
+            </ul>
+            {% endif %}
+        </div>
+      </div>
+      <div class="row g-5">
+        <div class="col-md-12 col-lg-12 order-md-last">
+            {% if posts %}
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-primary">Ogłoszenia użytkownika</span>
+            </h4>
+          <ul class="list-group mb-3">
+            {% for post in posts %}
+            <div class="modal modal-alert position-absolute d-block bg-secondary py-5 d-none" style="--bs-bg-opacity: .7;" tabindex="-1" role="dialog" id="modalChoicePost{{ post.id }}"> <!-- Delete confirmation -->
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content rounded-4 shadow">
+                    <div class="modal-body p-4 text-center">
+                      <h5 class="mb-0">Czy napewno chcesz zamknąć te ogłoszenie ?</h5>
+                      <p class="mb-0">Ogłoszenie zostanie zarchiwizowane.</p>
+                    </div>
+                    <div class="modal-footer flex-nowrap p-0">
+                      <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-right text-danger"><strong>Tak. zamknij</strong></button>
+                      <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal">Nie</button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <li class="list-group-item d-flex justify-content-between lh-sm">
+                <div class="d-flex">
+                    <div>
+                        <img src="/static/photos/{{ post.photo }}" height="150px">
+                    </div>
+                    <div class="m-2">
+                            <a href="/post/{{ post.id }}" class="text-decoration-none">
+                                <h6 class="my-0">{{ post.manufacture }} {{ post.model }}</h6>
+                            </a>
+                            <small class="text-muted">Wystawiono: {{ post.date_posted.replace(microsecond=0) }}</small>
+                            <h6 class="my-0 post-price-after text-primary">{{ post.price }}</h6>
+                      </div>
+                    </div>
+                    {% if current_user.id == user.id %}
+                    <div>
+                        <a href="/post/{{ post.id }}/edit">
+                            <button type="button" class="btn btn-primary">
+                                Edytuj
+                            </button>
+                        </a>
+                        <button type="button" class="btn btn-danger">
+                            Zamknij <!-- TODO -->
+                        </button>
+                    </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+
+            <!-- IF archived  TODO
+            <li class="list-group-item d-flex justify-content-between bg-light">
+              <div class="text-success">
+                <h6 class="my-0">Promo code</h6>
+                <small>EXAMPLECODE</small>
+              </div>
+            </li>-->
+          </ul>
+          {% else %}
+          <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-primary">Użytkownik nie ma żadnych aktywnych ogłoszeń</span>
+        </h4>
+          {% endif %}
+        </div>
+      </div>
+    </main>
+</div>
+{% endblock content %}

@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block content %} <!-- TODO -->
+    <link href="{{ url_for('static',filename='/css/signin.css') }}" rel="stylesheet">
+    <main class="container d-flex justify-content-center">
+  <form class="needs-validation novalidate" id='edit-user-form' action="" method="post">
+    <h1 class="h3 mb-3 fw-normal">Edytuj użytkowania {{ user.login }}</h1>
+    <div class="row justify-content-center">
+      <div class="form-floating col-md-12 px-1 my-1">
+        <input type="text" class="form-control" id="login" name='login' placeholder="login" required value="{{ user.login }}">
+        <label for="login" class="form-field-required">Login</label>
+      </div>
+      <div class="formErrorMessage" id="loginErrorEmpty">
+        Login nie może być pusty !
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="text" class="form-control" id="userFirstName" name='userFirstName' placeholder="Imię" value="{{ user.firstname }}">
+        <label for="userFirstName">Imię</label>
+      </div>
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="text" class="form-control" id="userLastName" name='userLastName' placeholder="Nazwisko" value="{{ user.lastname }}">
+        <label for="userLastName">Nazwisko</label>
+      </div>
+    </div>
+    <div class="row justify-content-center need-identical">
+      <div class="form-floating col-md-12 px-1 my-1">
+        <input type="email" class="form-control need-identical-input" id="email" name="email" placeholder="email" required value="{{ user.email }}"> <!-- border-danger -->
+        <label for="floatingInput" class="form-field-required">Adres email</label>
+      </div>
+      <div class="formErrorMessage" id="emailErrorNotIdentical">
+        Podane adresy email nie są jednakowe !
+      </div>
+      <div class="formErrorMessage" id="emailErrorEmpty">
+        Email nie może być pusty !
+      </div>
+    </div>
+    <hr class="my-4">
+    <h1 class="h3 mb-3 fw-normal">Zmiana hasła</h1>
+    <small class="form-text">
+        Poniższe pola pozostaw puste jeżeli nie chcesz zmieniać hasła.
+    </small>
+    <div class="row justify-content-center need-identical">
+        <div class="form-floating col-md-12 px-1 my-1">
+          <input type="password" class="form-control need-identical-input" id="oldPassword" placeholder="hasło" name='password'> <!-- border-danger -->
+          <label for="floatingPassword">Obecne hasło</label>
+        </div>
+      </div>
+    <div class="row justify-content-center need-identical">
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="password" class="form-control need-identical-input" id="newPassword" placeholder="hasło" name='password'> <!-- border-danger -->
+        <label for="floatingPassword">Nowe hasło</label>
+      </div>
+      <div class="form-floating col-md-6 px-1 my-1">
+        <input type="password" class="form-control need-identical-input" id="newPasswordConfirm" placeholder="potwierdź hasło"> <!-- border-danger -->
+        <label for="floatingPassword2">Powtórz nowe hasło</label>
+      </div>
+      <div class="formErrorMessage" id="passwordErrorNotIdentical">
+        Podane hasła nie są jednakowe !
+      </div>
+      <div class="formErrorMessage" id="passwordErrorEmpty">
+        Musisz podać hasło !
+      </div>
+    </div>
+    <hr class="my-4">
+    <small class="form-text text-danger">* - Wymagane</small>
+    <div class="row justify-content-center">
+      <button class="w-100 btn btn-lg btn-primary m-2" type="button" onclick="EditUserFormValidation()">Wprowadź zmiany</button>
+    </div>
+  </form>
+</main>
+<script src="{{ url_for('static', filename='js/registerFormValidation.js') }}"></script>
+{% endblock content %}
