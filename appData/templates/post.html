@@ -20,7 +20,7 @@
                           <p class="mb-0">Ogłoszenie zostanie zarchiwizowane.</p>
                         </div>
                         <div class="modal-footer flex-nowrap p-0">
-                            <button type="button" onclick="window.location.href='/post/{{ post.id }}/delete'" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-right text-danger" onclick=""><strong>Tak</strong></button>
+                            <button type="button" onclick="window.location.href='/post/{{ post.id }}/archive'" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-right text-danger"><strong>Tak</strong></button>
                             <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal" onclick="modalToogle('Close');">Nie</button>
                         </div>
                       </div>
@@ -35,6 +35,18 @@
                         <div>
                             <small class="text-muted">Cena</small>
                             <h6 class="my-0 post-price-after">{{ post.price }}</h6>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <small class="text-muted">Rok produkcji</small>
+                            <h6 class="my-0 post-price-after">{{ post.manufacture_year }}</h6>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <small class="text-muted">Lokalizacja</small>
+                            <h6 class="my-0">{{ post.location }}</h6>
                         </div>
                     </li>
                     <li class="list-group-item d-flex justify-content-between lh-sm">
@@ -99,7 +111,9 @@
             <div class="col-md-7 col-lg-8">
                 <img src="/static/photos/{{ post.photo }}" width="850px" height="450px">
                 <hr class="my-4">
-                <h4 class="mb-3">{{ post.manufacture }} {{ post.model }}</h4>
+                <h4 class="mb-3">
+                    {{ post.manufacture }} {{ post.model }}
+                </h4>
                 <div class="row g-3">
                     <div class="col-sm-6">
                         <label for="firstName" class="form-label">Opis</label>

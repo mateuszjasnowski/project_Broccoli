@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
-{% block content %} <!-- TODO -->
+{% block content %}
     <link href="{{ url_for('static',filename='/css/signin.css') }}" rel="stylesheet">
     <main class="container d-flex justify-content-center">
-  <form class="needs-validation novalidate" id='edit-user-form' action="" method="post">
+  <form class="needs-validation novalidate" id='edit-user-form' action="/user/{{ user.id }}/edit_proceed" method="post">
     <h1 class="h3 mb-3 fw-normal">Edytuj użytkowania {{ user.login }}</h1>
     <div class="row justify-content-center">
       <div class="form-floating col-md-12 px-1 my-1">
@@ -36,19 +36,37 @@
       </div>
     </div>
     <hr class="my-4">
+    {% if current_user.role == 'Admin' %}
+    <div class="row justify-content-center">
+      <div class="form-floating col-md-12 px-1 my-1">
+        <select type="option" class="form-control" id="status" name='status' placeholder="status">
+          {% for role in roles %}
+            {% if role == user.role %}
+            <option selected>{{ role }}</option>
+            {% else %}
+            <option>{{ role }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        <label for="status">Status</label>
+      </div>
+    </div>
+    <hr class="my-4">
+    {% endif %}
+    {% if current_user.id == user.id %}
     <h1 class="h3 mb-3 fw-normal">Zmiana hasła</h1>
     <small class="form-text">
         Poniższe pola pozostaw puste jeżeli nie chcesz zmieniać hasła.
     </small>
     <div class="row justify-content-center need-identical">
         <div class="form-floating col-md-12 px-1 my-1">
-          <input type="password" class="form-control need-identical-input" id="oldPassword" placeholder="hasło" name='password'> <!-- border-danger -->
+          <input type="password" class="form-control need-identical-input" id="oldPassword" placeholder="hasło" name='oldPassword'> <!-- border-danger -->
           <label for="floatingPassword">Obecne hasło</label>
         </div>
       </div>
     <div class="row justify-content-center need-identical">
       <div class="form-floating col-md-6 px-1 my-1">
-        <input type="password" class="form-control need-identical-input" id="newPassword" placeholder="hasło" name='password'> <!-- border-danger -->
+        <input type="password" class="form-control need-identical-input" id="newPassword" placeholder="hasło" name='newPassword'> <!-- border-danger -->
         <label for="floatingPassword">Nowe hasło</label>
       </div>
       <div class="form-floating col-md-6 px-1 my-1">
@@ -63,9 +81,10 @@
       </div>
     </div>
     <hr class="my-4">
+    {% endif %}
     <small class="form-text text-danger">* - Wymagane</small>
     <div class="row justify-content-center">
-      <button class="w-100 btn btn-lg btn-primary m-2" type="button" onclick="EditUserFormValidation()">Wprowadź zmiany</button>
+      <button class="w-100 btn btn-lg btn-primary m-2" type="submit">Wprowadź zmiany</button>
     </div>
   </form>
 </main>

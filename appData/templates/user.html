@@ -78,29 +78,23 @@
             </h4>
           <ul class="list-group mb-3">
             {% for post in posts %}
-            <div class="modal modal-alert position-absolute d-block bg-secondary py-5 d-none" style="--bs-bg-opacity: .7;" tabindex="-1" role="dialog" id="modalChoicePost{{ post.id }}"> <!-- Delete confirmation -->
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content rounded-4 shadow">
-                    <div class="modal-body p-4 text-center">
-                      <h5 class="mb-0">Czy napewno chcesz zamknąć te ogłoszenie ?</h5>
-                      <p class="mb-0">Ogłoszenie zostanie zarchiwizowane.</p>
-                    </div>
-                    <div class="modal-footer flex-nowrap p-0">
-                      <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-right text-danger"><strong>Tak. zamknij</strong></button>
-                      <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal">Nie</button>
-                    </div>
-                  </div>
-                </div>
-            </div>
+            {% if post.status == 'Published' %}
             <li class="list-group-item d-flex justify-content-between lh-sm">
+            {% else %}
+            <li class="list-group-item d-flex justify-content-between bg-light">
+            {% endif %}
                 <div class="d-flex">
                     <div>
                         <img src="/static/photos/{{ post.photo }}" height="150px">
                     </div>
                     <div class="m-2">
+                        {% if current_user.id == user.id %}
+                            <span class="badge bg-primary rounded-pill">{{ post.status}}</span>
+                        {% endif %}
                             <a href="/post/{{ post.id }}" class="text-decoration-none">
                                 <h6 class="my-0">{{ post.manufacture }} {{ post.model }}</h6>
                             </a>
+                            <small class="text-muted">{{ post.location }}</small><br>
                             <small class="text-muted">Wystawiono: {{ post.date_posted.replace(microsecond=0) }}</small>
                             <h6 class="my-0 post-price-after text-primary">{{ post.price }}</h6>
                       </div>
@@ -112,21 +106,19 @@
                                 Edytuj
                             </button>
                         </a>
-                        <button type="button" class="btn btn-danger">
+                        {% if post.status == 'Published' %}
+                        <button type="button" class="btn btn-danger" onclick="window.location.href='/post/{{ post.id }}/delete/action_confirm?back=home'">
                             Zamknij <!-- TODO -->
                         </button>
+                        {% else %}
+                        <button type="button" class="btn btn-outline-warning">
+                            Opublikuj <!-- TODO -->
+                        </button>
+                        {% endif %}
                     </div>
                     {% endif %}
                 </li>
             {% endfor %}
-
-            <!-- IF archived  TODO
-            <li class="list-group-item d-flex justify-content-between bg-light">
-              <div class="text-success">
-                <h6 class="my-0">Promo code</h6>
-                <small>EXAMPLECODE</small>
-              </div>
-            </li>-->
           </ul>
           {% else %}
           <h4 class="d-flex justify-content-between align-items-center mb-3">
