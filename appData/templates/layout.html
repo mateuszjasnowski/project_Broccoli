@@ -54,7 +54,6 @@
               </a>
 
               <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                  <!-- TODO if user is logged -->
                   <li>
                       {% if title == 'Start' %}
                       <a href="{{ url_for('home') }}" class="nav-link nav-links px-2 text-capitalize link-dark border-bottom border-secondary">
@@ -77,7 +76,7 @@
               {% if current_user.is_authenticated %}
               <div class="col-md-3 text-end">
                 {% if current_user.role == 'Admin' %}
-                <a href="{{ url_for('admin_panel')}}"> <!-- TODO -->
+                <a href="{{ url_for('admin_panel')}}">
                   <button type="button" class="btn btn-outline-success me-2">
                     Panel administratora
                   </button>

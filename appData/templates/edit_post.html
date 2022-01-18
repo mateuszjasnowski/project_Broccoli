@@ -23,7 +23,7 @@
             <label for="manufacture_year" class="form-label form-field-required">Rok produkcji</label>
             <select class="form-control" id="manufacture_year" name="manufacture_year" required>
                 <option selected>{{ post.manufacture_year }}</option>
-                {% for year in range(current_year , 1899, -1 ) %} <!-- TODO -->
+                {% for year in range(current_year , 1899, -1 ) %}
                   <option>{{ year }}</option>
                 {% endfor %}
             </select>
@@ -46,7 +46,7 @@
             <label for="status" class="form-label">Status</label>
             <select type="option" class="form-control" id="status" name='status' placeholder="status">
               {% for status in statuses %}
-                {% if staus == post.status %}
+                {% if status == post.status %}
                 <option selected>{{ status }}</option>
                 {% else %}
                 <option>{{ status }}</option>

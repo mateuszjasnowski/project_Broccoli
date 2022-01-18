@@ -34,7 +34,6 @@ class Post(db.Model):
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     status = db.Column(db.String(10), default='Published')
     location = db.Column(db.String(255))
-    #postVisitCount = db.Column(db.Integer(), nullable=False, default=0) #TODO not big piority
 
     def __repr__(self):
         return f"Post('{self.id}','{self.author}','{self.manufacture}','{self.model}','{self.manufacture_year}','{self.photo}','{self.description}','{self.price}','{self.date_posted}')"

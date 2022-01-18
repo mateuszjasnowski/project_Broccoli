@@ -86,17 +86,24 @@ def login_proceed():
     formData = BroccoliLoginForm(request.form.get('login'),request.form.get('password'),request.form.get('remember-me'))
     if formData.isUsernameUsed():
         user = User.query.filter_by(login=formData.username).first()
-        if user and bcrypt.check_password_hash(user.password, formData.password):
-            login_user(user, remember=formData.rememberMe)
-            next_page = request.form.get('next_page')
-            if next_page:
-                return redirect(next_page)
-            else:
-                return redirect(url_for('home'))
-        else:
-            #flash(user.password,'danger')
-            flash('Błędny login lub hasło.', 'danger')
+        if user.role == "Unverified":
+            flash('Twoje konto nie jest zweryfikowane. Sprawdź swoją skrzynkę mailową', 'warning')
             return redirect(url_for('login'))
+        elif user.role == 'Blocked':
+            flash('Twoje konto jest zablokowane. Skontaktuj się z administratorem', 'danger')
+            return redirect(url_for('login'))
+        else:
+            if user and bcrypt.check_password_hash(user.password, formData.password):
+                login_user(user, remember=formData.rememberMe)
+                next_page = request.form.get('next_page')
+                if next_page:
+                    return redirect(next_page)
+                else:
+                    return redirect(url_for('home'))
+            else:
+                #flash(user.password,'danger')
+                flash('Błędny login lub hasło.', 'danger')
+                return redirect(url_for('login'))
     flash('Konto o podanym loginie nie istnieje. Spróbuj inny login lub zarejestruj konto', 'danger')
     return redirect(url_for('login')) #TODO reset password
 
@@ -135,11 +142,6 @@ def register_proceed():
 @app.route('/about')
 def about():
     return render_template('about.html',title='O projekcie') #TODO
-
-
-@app.route('/admin')
-def admin():
-    return 'Hi' #TODO
 
 
 @app.route('/terms')
@@ -188,6 +190,12 @@ def new_post_publish():
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     title = 'Ogłoszenie - ' + post.manufacture + ' ' + post.model
+    if post.author.role == "Blocked" or post.status == 'Blocked':
+        flash('Ogłoszenie jest niedostępne','warning')
+        if current_user.role != "Admin":
+            return redirect(url_for('home'))
+    if post.status == 'Archived':
+        flash('Ogłoszenie nie jest już aktualne','info')
     return render_template('post.html', post=post, title=title)
 
 @app.route('/post/<int:post_id>/edit')
@@ -209,9 +217,21 @@ def edit_post(post_id):
 def edit_proceed(post_id):
     formData = BroccoliNewPostForm(request.form.get('manufacture'),request.form.get('model'),request.form.get('manufacture_year'),request.form.get('price'),request.files['photo'],request.form.get('description'),current_user.id,request.form.get('location'))
     post = Post.query.get_or_404(post_id)
+    post.manufacture = formData.manufacture
+    post.model = formData.model
+    post.manufacture_year = formData.manufacture_year
+    post.price = formData.price
+    post.location = formData.location
+    post.description = formData.description
+    post.date_posted = datetime.utcnow()
     if formData.photo:
-        return 'Add new photo'
-    return post.manufacture #TODO
+        newPhoto = request.files['photo']
+        post.photo = save_picture(newPhoto)
+    if request.form.get('status'):
+        post.status = request.form.get('status')
+    db.session.commit()
+    redirectLocation = '/post/'+str(post.id)
+    return redirect(redirectLocation)
 
 @app.route('/post/<int:post_id>/delete')
 @login_required
@@ -220,7 +240,7 @@ def delete_post(post_id):
     if current_user.id == post.author.id or current_user.role == 'Admin':
         if post.photo != 'defaultCar.jpg':
             os.remove(os.path.join(app.root_path, 'static/photos', post.photo))
-        db.session.query(Post).filter(Post.id==post.id).delete() #TODO change parameter only
+        db.session.query(Post).filter(Post.id==post.id).delete()
         db.session.commit()
         flash('Ogłoszenie zostało usunięte','success')
         if request.args.get('back'):
@@ -230,7 +250,7 @@ def delete_post(post_id):
     else:
         flash('Nie możesz wykonać tej akcji','danger')
         redirectLocation = '/post/'+str(post.id)
-        return redirect(redirectLocation) 
+        return redirect(redirectLocation)
 
 
 @app.route('/user/<int:user_id>')
@@ -240,6 +260,11 @@ def user(user_id):
     postOfUser = Post.query.filter_by(user_id=user.id).all()
     title = 'Użytkownik '+user.login
     return render_template('user.html', user=user, title=title, posts=postOfUser)
+
+
+def userPasswordChnage(user_id,oldPassword,newPassword):
+    return 'Hi'
+
 
 @app.route('/user/<int:user_id>/edit')
 @login_required
@@ -254,13 +279,51 @@ def edit_user(user_id):
         redirectLocation = '/user/'+str(user.id)
         return redirect(redirectLocation)
 
+
+@app.route('/user/<int:user_id>/edit_proceed', methods=["POST"])
+@login_required
+def user_proceed(user_id):
+    user = User.query.get_or_404(user_id)
+    user.login = request.form.get('login')
+    user.firstname = request.form.get('userFirstName')
+    user.lastname = request.form.get('userLastName')
+    user.email = request.form.get('email')
+
+    if request.form.get('status'):
+        user.role = request.form.get('status')
+
+    if request.form.get('oldPassword'):
+        return 'change password'
+    else:
+        db.session.commit()
+        redirectLocation = '/user/'+str(user.id)
+        return redirect(redirectLocation)
+
+@app.route('/user/<int:user_id>/delete')
+@login_required
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    if current_user.id == user.id or current_user.role == 'Admin':
+        db.session.query(User).filter(User.id==user.id).delete()
+        db.session.commit()
+        flash('Konto zostało usunięte','success')
+        if request.args.get('back'):
+            return redirect(url_for(request.args.get('back')))
+        else:
+            return redirect(url_for('home'))
+    else:
+        flash('Nie możesz wykonać tej akcji','danger')
+        redirectLocation = '/user/'+str(user.id)
+        return redirect(redirectLocation)
+
+
 @app.route('/admin_panel')
 @login_required
 def admin_panel():
     if current_user.role == 'Admin':
         users = User.query.all()
         posts = Post.query.all()
-        statistics = BroccoliStatistics(len(posts),len(posts),len(users),'0.21') #TODO separate posts created today #BUILD NUM HERE
+        statistics = BroccoliStatistics(len(posts),len(posts),len(users),'0.21.2') #TODO separate posts created today #BUILD NUM HERE
         return render_template('admin_panel.html', title='Panel administratora', users=users, posts=posts, statistics=statistics)
     else:
         flash('Nie jesteś administratorem!','warning')
@@ -274,6 +337,18 @@ def post_delete_action_confirm(post_id):
     previousAction = request.args.get('back')
     if current_user.id == post.author.id or current_user.role == 'Admin':
         return render_template('action_confirm.html',nextAction=nextAction,previousAction=previousAction,title='Potwierdź usunięcie ogłoszenia')
+    else:
+        flash('Nie możesz wykonać tej czynności!','warning')
+        return redirect(url_for(previousAction))
+
+@app.route('/user/<int:user_id>/delete/action_confirm', methods=["GET"])
+@login_required
+def user_delete_action_confirm(user_id):
+    user = User.query.get_or_404(user_id)
+    nextAction='/user/'+str(user.id)+'/delete'
+    previousAction = request.args.get('back')
+    if current_user.id == user.id or current_user.role == 'Admin':
+        return render_template('action_confirm.html',nextAction=nextAction,previousAction=previousAction,title='Potwierdź usunięcie urzytkownika')
     else:
         flash('Nie możesz wykonać tej czynności!','warning')
         return redirect(url_for(previousAction))

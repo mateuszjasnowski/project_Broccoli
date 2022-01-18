@@ -17,6 +17,7 @@
         <div class="row justify-content-center px-5" style="width: 100%;">
             {% if posts %}
             {% for post in posts %}
+            {% if post.status == 'Published' and post.author.role != "Blocked" %}
             <div class="col-md-4 post-hover">
                 <a href="/post/{{ post.id }}" class="text-decoration-none text-body">
                     <div class="card mb-4 shadow-sm">
@@ -32,6 +33,7 @@
                     </div>
                 </a>
             </div>
+            {% endif %}
             {% endfor %}
             {% else %}
             <section class="jumbotron text-center">
