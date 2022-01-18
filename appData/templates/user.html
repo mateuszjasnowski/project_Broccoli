@@ -98,9 +98,13 @@
                         <img src="/static/photos/{{ post.photo }}" height="150px">
                     </div>
                     <div class="m-2">
+                        {% if current_user.id == user.id %}
+                            <span class="badge bg-primary rounded-pill">{{ post.status}}</span>
+                        {% endif %}
                             <a href="/post/{{ post.id }}" class="text-decoration-none">
                                 <h6 class="my-0">{{ post.manufacture }} {{ post.model }}</h6>
                             </a>
+                            <small class="text-muted">{{ post.location }}</small><br>
                             <small class="text-muted">Wystawiono: {{ post.date_posted.replace(microsecond=0) }}</small>
                             <h6 class="my-0 post-price-after text-primary">{{ post.price }}</h6>
                       </div>
@@ -112,9 +116,15 @@
                                 Edytuj
                             </button>
                         </a>
+                        {% if post.status == 'Published' %}
                         <button type="button" class="btn btn-danger">
                             Zamknij <!-- TODO -->
                         </button>
+                        {% else %}
+                        <button type="button" class="btn btn-outline-warning">
+                            Opublikuj <!-- TODO -->
+                        </button>
+                        {% endif %}
                     </div>
                     {% endif %}
                 </li>

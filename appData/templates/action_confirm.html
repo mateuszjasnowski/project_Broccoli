@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="modal modal-alert position-absolute d-block bg-secondary py-5" tabindex="-1" role="dialog" id="modalChoice">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content rounded-4 shadow">
+        <div class="modal-body p-4 text-center">
+          <h5 class="mb-0">Czy napewno chcesz wykonać tą czynność ?</h5>
+          <p class="mb-0">Być może tego nie będzie można już cofnąć.</p>
+        </div>
+        <div class="modal-footer flex-nowrap p-0">
+          <button type="button" class="btn btn-lg btn-danger fs-6 text-decoration-none col-6 m-0 rounded-0 border-right" onclick="window.location.href='{{ nextAction }}?back={{ previousAction }}'"><strong>Tak</strong></button>
+          <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal" onclick="window.location.href='{{ url_for(previousAction) }}'">Nie</button>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock content %}

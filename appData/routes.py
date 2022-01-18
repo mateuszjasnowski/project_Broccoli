@@ -1,6 +1,5 @@
 from datetime import datetime
-from pydoc import apropos
-import secrets
+import secrets, os
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
 from appData import app, db, bcrypt
@@ -48,7 +47,7 @@ class BroccoliLoginForm:
 
 
 class BroccoliNewPostForm:
-    def __init__(self, manufacture, model, manufacture_year, price, photo, description, author): #author = user_id
+    def __init__(self, manufacture, model, manufacture_year, price, photo, description, author, location): #author = user_id
         self.manufacture = manufacture
         self.model = model
         self.manufacture_year = manufacture_year
@@ -56,6 +55,7 @@ class BroccoliNewPostForm:
         self.photo = photo
         self.description = description
         self.author = author
+        self.location = location
     #TODO form validation
 
 class BroccoliStatistics:
@@ -122,7 +122,7 @@ def register_proceed():
             user = User(login=formData.username, firstname=formData.firstName, lastname=formData.lastName, email=formData.email, password=hashed_password)
             db.session.add(user)
             db.session.commit()
-            flash('Your account has been created! You are now able to log in', 'success')
+            flash('Konto zostało utworzone! Możesz się teraz zalogować.', 'success')
             return redirect(url_for('login'))
         else:
             flash('Istnieje już konto z podanym adresem email.','danger')
@@ -158,26 +158,26 @@ def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/cars_pics', picture_fn)
+    picture_path = os.path.join(app.root_path, 'static/photos', picture_fn)
 
-    output_size = (340, 250)
+    output_size = (850, 450) #maximum image size on page
     i = Image.open(form_picture)
     i.thumbnail(output_size)
     i.save(picture_path)
 
     return picture_fn
 
-
 @app.route('/post/new_post_publish', methods=["POST"])
 @login_required
 def new_post_publish():
-    formData = BroccoliNewPostForm(request.form.get('manufacture'),request.form.get('model'),request.form.get('manufacture_year'),request.form.get('price'),request.form.get('photo'),request.form.get('description'),current_user.id)
+    formData = BroccoliNewPostForm(request.form.get('manufacture'),request.form.get('model'),request.form.get('manufacture_year'),request.form.get('price'),request.files['photo'],request.form.get('description'),current_user.id,request.form.get('location'))
     #TODO form validation placeholder
-    #if formData.photo:
-        #carPhoto = save_picture(formData.photo)
-        #post = Post(user_id=formData.author, manufacture=formData.manufacture, model=formData.model, manufacture_year=formData.manufacture_year, photo=carPhoto, description=formData.description, price=formData.price)
-    #else:
-    post = Post(user_id=formData.author, manufacture=formData.manufacture, model=formData.model, manufacture_year=formData.manufacture_year, description=formData.description, price=formData.price)
+    if formData.photo:
+        carPhotoFile = request.files['photo']
+        carPhoto = save_picture(carPhotoFile)
+        post = Post(user_id=formData.author, manufacture=formData.manufacture, model=formData.model, manufacture_year=formData.manufacture_year, photo=carPhoto, description=formData.description, price=formData.price, location=formData.location)
+    else:
+        post = Post(user_id=formData.author, manufacture=formData.manufacture, model=formData.model, manufacture_year=formData.manufacture_year, description=formData.description, price=formData.price, location=formData.location)
     db.session.add(post)
     db.session.commit()
     flash('Utworzono nowe głoszenie !','success')
@@ -196,12 +196,41 @@ def edit_post(post_id):
     post = Post.query.get_or_404(post_id)
     thisYear = int(datetime.now().strftime("%Y"))
     title = 'Edytuj ogłoszenie - ' + post.manufacture + ' ' + post.model
-    if current_user.id == post.author.id:
-        return render_template('edit_post.html', post=post,  current_year=thisYear, title=title)
+    if current_user.id == post.author.id or current_user.role == 'Admin':
+        statuses = ['Published','Archived','Blocked']
+        return render_template('edit_post.html', post=post,  current_year=thisYear, title=title, statuses=statuses)
     else:
         flash('Nie możesz edytować ogłoszenia które nie jest twoje!','warning')
         redirectLocation = '/post/'+str(post.id)
         return redirect(redirectLocation)
+
+@app.route('/post/<int:post_id>/edit_proceed', methods=["POST"])
+@login_required
+def edit_proceed(post_id):
+    formData = BroccoliNewPostForm(request.form.get('manufacture'),request.form.get('model'),request.form.get('manufacture_year'),request.form.get('price'),request.files['photo'],request.form.get('description'),current_user.id,request.form.get('location'))
+    post = Post.query.get_or_404(post_id)
+    if formData.photo:
+        return 'Add new photo'
+    return post.manufacture #TODO
+
+@app.route('/post/<int:post_id>/delete')
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if current_user.id == post.author.id or current_user.role == 'Admin':
+        if post.photo != 'defaultCar.jpg':
+            os.remove(os.path.join(app.root_path, 'static/photos', post.photo))
+        db.session.query(Post).filter(Post.id==post.id).delete() #TODO change parameter only
+        db.session.commit()
+        flash('Ogłoszenie zostało usunięte','success')
+        if request.args.get('back'):
+            return redirect(url_for(request.args.get('back')))
+        else:
+            return redirect(url_for('home'))
+    else:
+        flash('Nie możesz wykonać tej akcji','danger')
+        redirectLocation = '/post/'+str(post.id)
+        return redirect(redirectLocation) 
 
 
 @app.route('/user/<int:user_id>')
@@ -209,7 +238,7 @@ def edit_post(post_id):
 def user(user_id):
     user = User.query.get_or_404(user_id)
     postOfUser = Post.query.filter_by(user_id=user.id).all()
-    title = 'Użytkowanik '+user.login
+    title = 'Użytkownik '+user.login
     return render_template('user.html', user=user, title=title, posts=postOfUser)
 
 @app.route('/user/<int:user_id>/edit')
@@ -217,8 +246,9 @@ def user(user_id):
 def edit_user(user_id):
     user = User.query.get_or_404(user_id)
     title = 'Edytuj konto ' + user.login
-    if current_user.id == user.id:
-        return render_template('edit_user.html', user=user, title=title)
+    roles = ['User','Admin','Unverified','Blocked']
+    if current_user.id == user.id or current_user.role == 'Admin':
+        return render_template('edit_user.html', user=user, title=title, roles=roles)
     else:
         flash('Nie możesz edytować tego konta!','warning')
         redirectLocation = '/user/'+str(user.id)
@@ -230,8 +260,20 @@ def admin_panel():
     if current_user.role == 'Admin':
         users = User.query.all()
         posts = Post.query.all()
-        statistics = BroccoliStatistics(len(posts),len(posts),len(users),'0.20.1') #TODO separate posts created today #BUILD NUM HERE
+        statistics = BroccoliStatistics(len(posts),len(posts),len(users),'0.21') #TODO separate posts created today #BUILD NUM HERE
         return render_template('admin_panel.html', title='Panel administratora', users=users, posts=posts, statistics=statistics)
     else:
         flash('Nie jesteś administratorem!','warning')
         return redirect(url_for('home'))
+
+@app.route('/post/<int:post_id>/delete/action_confirm', methods=["GET"])
+@login_required
+def post_delete_action_confirm(post_id):
+    post = Post.query.get_or_404(post_id)
+    nextAction='/post/'+str(post.id)+'/delete'
+    previousAction = request.args.get('back')
+    if current_user.id == post.author.id or current_user.role == 'Admin':
+        return render_template('action_confirm.html',nextAction=nextAction,previousAction=previousAction,title='Potwierdź usunięcie ogłoszenia')
+    else:
+        flash('Nie możesz wykonać tej czynności!','warning')
+        return redirect(url_for(previousAction))

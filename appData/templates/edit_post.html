@@ -7,7 +7,7 @@
   <div class="row g-5 justify-content-center" style="width: 100%;">
     <div class="col-md-7 col-lg-8">
       <h4 class="mb-3">Dane pojazdu</h4>
-      <form class="needs-validation" action="{{ url_for('new_post_publish') }}" method="post">
+      <form class="needs-validation" action="/post/{{ post.id }}/edit_proceed" method="post" enctype=multipart/form-data>
         <div class="row g-3">
           <div class="col-sm-6">
             <label for="manufacture" class="form-label form-field-required">Marka</label>
@@ -22,11 +22,9 @@
           <div class="col-sm-4">
             <label for="manufacture_year" class="form-label form-field-required">Rok produkcji</label>
             <select class="form-control" id="manufacture_year" name="manufacture_year" required>
-                <option disabled selected value>
-                    Wybierz
-                </option>
+                <option selected>{{ post.manufacture_year }}</option>
                 {% for year in range(current_year , 1899, -1 ) %} <!-- TODO -->
-                <option>{{ year }}</option>
+                  <option>{{ year }}</option>
                 {% endfor %}
             </select>
           </div>
@@ -42,6 +40,29 @@
             <input type="file" class="form-control" id="photo" name="photo"> <!-- TODO set allowed formats -->
           </div>
         </div>
+        {% if current_user.role == 'Admin' %}
+        <div class="row g-3">
+          <div class="col-sm-12">
+            <label for="status" class="form-label">Status</label>
+            <select type="option" class="form-control" id="status" name='status' placeholder="status">
+              {% for status in statuses %}
+                {% if staus == post.status %}
+                <option selected>{{ status }}</option>
+                {% else %}
+                <option>{{ status }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr class="my-4">
+        {% endif %}
+        <div class="row g-3">
+          <div class="col-sm-12">
+            <label for="location" class="form-label form-field-required">Lokalizacja</label>
+            <input type="text" class="form-control" id="location" name="location" value="{{ post.location }}" required>
+          </div>
+        </div>
         <div class="row g-3">
           <div class="col-sm-12">
             <label for="description" class="form-label">Opis</label>
@@ -51,11 +72,8 @@
         <small class="form-text text-danger">* - Pole wymagane</small>
         <div class="row g-3 mt-2 justify-content-end">
           <button class="w-15 btn btn-primary btn-lg" type="submit">Wprowadź zmiany</button>
+          <hr class="my-4">
         </div>
-        <!--
-            <div class="col-sm-3">
-        </div>
-        -->
       </form>
     </div>
   </div>
