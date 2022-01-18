@@ -10,7 +10,7 @@
                     <a href="/post/{{ post.id }}/edit">
                         <button type="button" class="btn btn-primary m-1">Edytuj</button>
                     </a>
-                    <button type="button" class="btn btn-danger m-1" onclick="modalToogle('Open');">Zamknij</button> <!-- TODO archivization needed -->
+                    <button type="button" class="btn btn-danger m-1" onclick="modalToogle('Open');">Zamknij</button>
                 </div>
                 <div class="modal modal-alert position-absolute d-block bg-secondary py-5 d-none" style="--bs-bg-opacity: .7;" tabindex="-1" role="dialog" id="modalChoice"> <!-- Delete confirmation -->
                     <div class="modal-dialog" role="document">
@@ -20,7 +20,7 @@
                           <p class="mb-0">Ogłoszenie zostanie zarchiwizowane.</p>
                         </div>
                         <div class="modal-footer flex-nowrap p-0">
-                            <button type="button" onclick="window.location.href='/post/{{ post.id }}/delete'" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-right text-danger" onclick=""><strong>Tak</strong></button>
+                            <button type="button" onclick="window.location.href='/post/{{ post.id }}/archive'" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-right text-danger"><strong>Tak</strong></button>
                             <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal" onclick="modalToogle('Close');">Nie</button>
                         </div>
                       </div>

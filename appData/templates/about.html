@@ -3,31 +3,44 @@
 <div class="container py-4">
     <div class="p-5 mb-4 bg-light rounded-3">
       <div class="container-fluid py-5">
-        <h1 class="display-5 fw-bold">Custom jumbotron</h1>
-        <p class="col-md-8 fs-4">Using a series of utilities, you can create this jumbotron, just like the one in previous versions of Bootstrap. Check out the examples below for how you can remix and restyle it to your liking.</p>
-        <button class="btn btn-primary btn-lg" type="button">Example button</button>
+        <h1 class="display-5 fw-bold">Projekt Brokół</h1>
+        <p class="col-md-8 fs-4">To projekt prostej aplikacji internetowej, która umożliwia towrzenie, odczytywanie, zmienianie i usuwanie ogłoszeń samochodów. Projekt powstanie w ramach zajęć 'Bazy danych i aplikacje mobilne' na kierunku Informatyka w Biznesie Uniwersytetu Ekonomicznego we Wrocławiu</p>
+        <button class="btn btn-primary btn-lg" type="button" onclick="window.location.href='/post/new_post'">Dodaj ogłoszenie</button>
       </div>
     </div>
 
     <div class="row align-items-md-stretch">
       <div class="col-md-6">
         <div class="h-100 p-5 text-white bg-dark rounded-3">
-          <h2>Change the background</h2>
-          <p>Swap the background-color utility and add a `.text-*` color utility to mix up the jumbotron look. Then, mix and match with additional component themes and more.</p>
-          <button class="btn btn-outline-light" type="button">Example button</button>
+          <h2>Wykorzystane technologie</h2>
+          <p>Aplikacja powstaje przy wykorzystaniu framework'a do aplikacji internetowych Flask wykorzystującego język programowania Python. Szata graficzna struktury html'a została utworzona z pomocą biblioteki CSS Bootstrap, a skrypty działające po stronie Frontendu aplikacji korzystają z framework'a jQuery. Baza danych wykorzystywana przez aplikację, jest dostarczana przez serwer #TODO, a komunikacja odbywa się dzięki biliotece SQLAlchemy dla języka Python</p>
+          <a href="https://flask.palletsprojects.com/en/2.0.x/">
+            <button class="btn btn-outline-light" type="button">Flask</button>
+          </a>
+          <a href="https://getbootstrap.com/">
+            <button class="btn btn-outline-light" type="button">Bootstrap</button>
+          </a>
+          <a href="https://jquery.com/">
+              <button class="btn btn-outline-light" type="button">jQuery</button>
+          </a>
+            <a href="https://www.mysql.com/">
+                <button class="btn btn-outline-light" type="button">MySQL</button>
+            </a>
+            <a href="https://www.sqlalchemy.org/">
+                <button class="btn btn-outline-light" type="button">SQLAlchemy</button>
+            </a>
         </div>
       </div>
       <div class="col-md-6">
         <div class="h-100 p-5 bg-light border rounded-3">
-          <h2>Add borders</h2>
-          <p>Or, keep it light and add a border for some added definition to the boundaries of your content. Be sure to look under the hood at the source HTML here as we've adjusted the alignment and sizing of both column's content for equal-height.</p>
-          <button class="btn btn-outline-secondary" type="button">Example button</button>
+          <h2>Nazwa</h2>
+          <p>Brokół to po prostu kolejne warzywo zaczynające się na literę B. Jest to kontynuacja nazewnictwa dotychcasowych projektów takich jak: Burak (dysk sieciowy) oraz Bakłażan (Narzędzie do testowania wydajności łączą)</p>
         </div>
       </div>
     </div>
 
     <footer class="pt-3 mt-4 text-muted border-top">
-      Broccoli © 2022
+      Projekt Brokół 🥦 © 2021-2022
     </footer>
 </div>
 {% endblock content %}
