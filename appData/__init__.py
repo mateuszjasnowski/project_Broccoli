@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt #copy
 from flask_login import LoginManager #copy
+from flask_mail import Mail
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '1c33f4287204b6e6823d1853e224353d'
@@ -12,5 +13,12 @@ login_manager = LoginManager(app) #copy
 login_manager.login_view = 'login' #copy
 login_manager.login_message = 'Musisz być zalogowany aby otrzymać dostęp do tej strony!'
 login_manager.login_message_category = 'info' #copy
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'jasnycorp@gmail.com'
+app.config['MAIL_PASSWORD'] = 'sLrqKJ9uD8BPBBRc1qDI' #TODO
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 
 from appData import routes

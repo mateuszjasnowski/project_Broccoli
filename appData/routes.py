@@ -2,9 +2,10 @@ from datetime import datetime
 import secrets, os
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
-from appData import app, db, bcrypt
+from appData import app, db, bcrypt, mail
 from appData.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Message
 
 
 class BroccoliRegisterForm:
@@ -131,7 +132,11 @@ def register_proceed():
     if formData.isUsernameUsed():
         if formData.isEmailUsed():
             hashed_password = bcrypt.generate_password_hash(formData.password).decode('utf-8')
-            user = User(login=formData.username, firstname=formData.firstName, lastname=formData.lastName, email=formData.email, password=hashed_password)
+            verification_code = secrets.token_hex(12)
+            msg = Message('Weryfikacja konta - Brokół', sender = 'jasnycorp@gmail.com', recipients = [formData.email])
+            msg.html = "Link aktywacyjny: <a href='http://127.0.0.1:2000/verification_code/"+formData.username+'/'+verification_code+"'>Zweryfikuj</a>"
+            mail.send(msg)
+            user = User(login=formData.username, firstname=formData.firstName, lastname=formData.lastName, email=formData.email, password=hashed_password, verification_message=verification_code)
             db.session.add(user)
             db.session.commit()
             flash('Konto zostało utworzone! Możesz się teraz zalogować.', 'success')
@@ -146,12 +151,12 @@ def register_proceed():
 
 @app.route('/about')
 def about():
-    return render_template('about.html', title='O projekcie')  # TODO
+    return render_template('about.html', title='O projekcie')
 
 
 @app.route('/terms')
 def terms():
-    return 'Terms'  # TODO
+    return render_template('terms.html', title='Regulamin')
 
 
 @app.route('/post/new_post')
@@ -309,7 +314,22 @@ def user_proceed(user_id):
         user.role = request.form.get('status')
 
     if request.form.get('oldPassword'):
-        return 'change password'
+        if request.form.get('newPassword'):
+            if bcrypt.check_password_hash(user.password, request.form.get('oldPassword')):
+                new_password_hased = bcrypt.generate_password_hash(request.form.get('newPassword')).decode('utf-8')
+                user.password = new_password_hased
+                flash('Hasło zostało zmienione','info')
+                db.session.commit()
+                redirectLocation = '/user/' + str(user.id)
+                return redirect(redirectLocation)
+            else:
+                flash('Podane obecne hasło jest niepoprawne!','warning')
+                redirectLocation = '/user/' + str(user.id) + '/edit'
+                return redirect(redirectLocation)
+        else:
+            flash('Konieczne jest podanie nowego hasła w celu jego zmiany','warning')
+            redirectLocation = '/user/' + str(user.id)
+            return redirect(redirectLocation)
     else:
         db.session.commit()
         redirectLocation = '/user/' + str(user.id)
@@ -341,7 +361,7 @@ def admin_panel():
         users = User.query.all()
         posts = Post.query.all()
         statistics = BroccoliStatistics(len(posts), len(posts), len(users),
-                                        '0.21.3')  # TODO separate posts created today #BUILD NUM HERE
+                                        '0.22.0')  # TODO separate posts created today #BUILD NUM HERE
         return render_template('admin_panel.html', title='Panel administratora', users=users, posts=posts,
                                statistics=statistics)
     else:
@@ -390,3 +410,28 @@ def post_archive(post_id):
         flash('Nie masz dostępu do tej opcji','warning')
         rediectLocation = '/post/'+str(post.id)
         return redirect(rediectLocation)
+
+@app.route('/verification_code/<username>/<verification_code>')
+def verify_user(username,verification_code):
+    user = User.query.filter_by(login = username).first()
+    if user.verification_message == verification_code and user.role == 'Unverified':
+        user.role = 'User'
+        db.session.commit()
+        flash('Konto zostało zweryfikowane', 'success')
+        return redirect(url_for('login'))
+    else:
+        flash('Nie można wykonac tej akcji', 'warning')
+        return redirect(url_for('home'))
+
+@app.route('/user/<int:user_id>/resend_verification')
+@login_required
+def resend_verification(user_id):
+    if current_user.role == 'Admin':
+        user = User.query.get_or_404(user_id)
+        msg = Message('Weryfikacja konta - Brokół', sender='jasnycorp@gmail.com', recipients=[user.email])
+        msg.html = "Link aktywacyjny: <a href='http://127.0.0.1:2000/verification_code/" + user.login + '/' + user.verification_message + "'>Zweryfikuj</a>"
+        mail.send(msg)
+        flash('Wiadomość weryfikacyjna została wysłana', 'info')
+        return redirect(url_for('admin_panel'))
+    flash('Nie można wykonac tej akcji', 'warning')
+    return redirect(url_for('home'))
