@@ -119,6 +119,22 @@
           {% endwith %}
         {% block content %}
         {% endblock %}
+        <div class="container">
+          <footer class="py-3 my-4">
+            <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+              <li class="nav-item"><a href="{{ url_for('home') }}" class="nav-link px-2 text-muted">Start</a></li>
+              {% if current_user.is_authenticated %}
+              <li class="nav-item"><a href="/user/{{ current_user.id }}" class="nav-link px-2 text-muted">Konto użytkownika</a></li>
+              {% else %}
+              <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link px-2 text-muted">Zaloguj</a></li>
+              <li class="nav-item"><a href="{{ url_for('register') }}" class="nav-link px-2 text-muted">Rejestracja</a></li>
+              {% endif %}
+              <li class="nav-item"><a href="{{ url_for('terms') }}" class="nav-link px-2 text-muted">Zasady użytkowania</a></li>
+              <li class="nav-item"><a href="{{ url_for('about') }}" class="nav-link px-2 text-muted">O projekcie</a></li>
+            </ul>
+            <p class="text-center text-muted">Projekt Brokół 🥦 © 2021-2022</p>
+          </footer>
+        </div>
         <script>
           function closeOnClick(element){
             $(element).css("display",'none');

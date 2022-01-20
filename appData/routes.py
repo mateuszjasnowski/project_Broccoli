@@ -56,7 +56,6 @@ class BroccoliNewPostForm:
         self.description = description
         self.author = author
         self.location = location
-    # TODO form validation
 
 
 class BroccoliStatistics:
@@ -108,7 +107,7 @@ def login_proceed():
                 flash('Błędny login lub hasło.', 'danger')
                 return redirect(url_for('login'))
     flash('Konto o podanym loginie nie istnieje. Spróbuj inny login lub zarejestruj konto', 'danger')
-    return redirect(url_for('login'))  # TODO reset password
+    return redirect(url_for('login'))
 
 
 @app.route("/logout")
@@ -187,7 +186,6 @@ def new_post_publish():
                                    request.form.get('manufacture_year'), request.form.get('price'),
                                    request.files['photo'], request.form.get('description'), current_user.id,
                                    request.form.get('location'))
-    # TODO form validation placeholder
     if formData.photo:
         carPhotoFile = request.files['photo']
         carPhoto = save_picture(carPhotoFile)
@@ -435,3 +433,51 @@ def resend_verification(user_id):
         return redirect(url_for('admin_panel'))
     flash('Nie można wykonac tej akcji', 'warning')
     return redirect(url_for('home'))
+
+@app.route('/reset_password')
+def reset_password():
+    return render_template('reset_password.html', title='Resetowanie hasła')
+
+@app.route('/reset_password_proceed', methods=['POST'])
+def reset_password_proceed():
+    email = request.form.get('email')
+    user = User.query.filter_by(email=email).first()
+    if user:
+        verification_code = secrets.token_hex(12)
+        new_password = secrets.token_hex(4)
+        user.verification_message = verification_code
+        db.session.commit()
+        msg = Message('Reset hasła do konta - PROJEKT BROKÓŁ', sender='jasnycorp@gmail.com', recipients=[user.email])
+        msg.html = "<b>Otrzymaliśmy prośbę resetu hasła dla konta "+ user.login +" które jest skojarzone z tym adresem email</b><br><p>Jeżeli nie zgłaszałeś takiej prośby lub nie posiadasz konta na naszym portalu, poinformuj nas odpowiadając na ten adres email.</p><br><h1>Resetowanie hasła:</h1><br><p>Twoje nowe hasło: <b>"+ new_password +"</b></p><br>Kliknij w link aby przeprowadzić reset: <a href='http://127.0.0.1:2000/user/"+ user.login + '/password_reset/' + verification_code + '/' + new_password +"'>https://127.0.0.1:2000/user/"+ user.login + '/password_reset/' + verification_code + '/' + new_password + "</a>"
+        mail.send(msg)
+        flash('Polecenie zmiany hasła zostało wysłane na podany adres email.','info')
+        return redirect(url_for('home')) #TODO check if working
+    flash('Nie znaleziono kona o podanym adresie email','warning')
+    return redirect(url_for('reset_password'))
+
+@app.route('/user/<username>/password_reset/<verification_code>/<new_password>')
+def password_reset_confirm(username,verification_code,new_password):
+    user = User.query.filter_by(login=username).first()
+    new_password_hased = bcrypt.generate_password_hash(new_password).decode('utf-8')
+    if user and user.verification_message == verification_code:
+        user.password = new_password_hased
+        db.session.commit()
+        flash('Hasło zostało zmienione na wskazane w mailu','success')
+        return redirect(url_for('login'))
+    flash('Nie można wykonac tej akcji', 'warning')
+    return redirect(url_for('home'))
+
+@app.route('/post/<int:post_id>/publish')
+@login_required
+def post_publish(post_id):
+    post = Post.query.get_or_404(post_id)
+    if current_user.id == post.author.id or current_user.role == 'Admin' and post.status == 'Archived':
+        post.status = 'Published'
+        db.session.commit()
+        flash('Ogłoszenie zostało opublikowane','success')
+        rediectLocation = '/post/'+str(post.id)
+        return redirect(rediectLocation)
+    else:
+        flash('Nie masz dostępu do tej opcji','warning')
+        rediectLocation = '/user/'+str(post.author.id)
+        return redirect(rediectLocation)

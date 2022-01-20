@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
-{% block content %}<!-- TODO -->
+{% block content %}
 <div class="container py-4">
+  <main>
     <div class="p-5 mb-4 bg-light rounded-3">
       <div class="container-fluid py-5">
         <h1 class="display-5 fw-bold">Projekt Brokół</h1>
@@ -35,12 +36,11 @@
         <div class="h-100 p-5 bg-light border rounded-3">
           <h2>Nazwa</h2>
           <p>Brokół to po prostu kolejne warzywo zaczynające się na literę B. Jest to kontynuacja nazewnictwa dotychcasowych projektów takich jak: Burak (dysk sieciowy) oraz Bakłażan (Narzędzie do testowania wydajności łączą)</p>
+          <a href="https://github.com/Ja-Sny/project_Broccoli">
+            <button class="btn btn-outline-secondary" type="button">GitHub</button>
+          </a>
         </div>
       </div>
     </div>
-
-    <footer class="pt-3 mt-4 text-muted border-top">
-      Projekt Brokół 🥦 © 2021-2022
-    </footer>
 </div>
 {% endblock content %}

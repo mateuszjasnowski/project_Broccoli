@@ -107,12 +107,12 @@
                             </button>
                         </a>
                         {% if post.status == 'Published' %}
-                        <button type="button" class="btn btn-danger" onclick="window.location.href='/post/{{ post.id }}/delete/action_confirm?back=home'">
-                            Zamknij <!-- TODO -->
+                        <button type="button" class="btn btn-danger" onclick="window.location.href='/post/{{ post.id }}/archive'">
+                            Zamknij
                         </button>
                         {% else %}
-                        <button type="button" class="btn btn-outline-warning">
-                            Opublikuj <!-- TODO -->
+                        <button type="button" class="btn btn-outline-warning" onclick="window.location.href='/post/{{ post.id }}/publish'">
+                            Opublikuj
                         </button>
                         {% endif %}
                     </div>
