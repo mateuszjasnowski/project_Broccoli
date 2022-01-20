@@ -449,7 +449,7 @@ def reset_password_proceed():
         user.verification_message = verification_code
         db.session.commit()
         msg = Message('Reset hasła do konta - PROJEKT BROKÓŁ', sender='jasnycorp@gmail.com', recipients=[user.email])
-        msg.html = "<b>Otrzymaliśmy prośbę resetu hasła dla konta "+ user.login +" które jest skojarzone z tym adresem email</b><br><p>Jeżeli nie zgłaszałeś takiej prośby lub nie posiadasz konta na naszym portalu, poinformuj nas odpowiadając na ten adres email.</p><br><h1>Resetowanie hasła:</h1><br><p>Twoje nowe hasło: <b>"+ new_password +"</b></p><br>Kliknij w link aby przeprowadzić reset: <a href='https://"+ brocooliSecrets.appIp + "/user/"+ user.login + '/password_reset/' + verification_code + '/' + new_password +"'>httpss://"+ brocooliSecrets.appIp + "/user/"+ user.login + '/password_reset/' + verification_code + '/' + new_password + "</a>"
+        msg.html = "<b>Otrzymaliśmy prośbę resetu hasła dla konta "+ user.login +" które jest skojarzone z tym adresem email</b><br><p>Jeżeli nie zgłaszałeś takiej prośby lub nie posiadasz konta na naszym portalu, poinformuj nas odpowiadając na ten adres email.</p><br><h1>Resetowanie hasła:</h1><br><p>Twoje nowe hasło: <b>"+ new_password +"</b></p><br>Kliknij w link aby przeprowadzić reset: <a href='https://"+ brocooliSecrets.appIp + "/user/"+ user.login + '/password_reset/' + verification_code + '/' + new_password +"'>https://"+ brocooliSecrets.appIp + "/user/"+ user.login + '/password_reset/' + verification_code + '/' + new_password + "</a>"
         mail.send(msg)
         flash('Polecenie zmiany hasła zostało wysłane na podany adres email.','info')
         return redirect(url_for('home')) #TODO check if working
