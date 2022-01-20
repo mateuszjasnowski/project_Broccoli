@@ -1,4 +1,4 @@
-appIp = 'project-broccoli.ew.r.appspot.com'
+appIp = '127.0.0.1' #'project-broccoli.ew.r.appspot.com'
 appVersion = 'v0.1.3-beta'
 appPort = '2000'
 
