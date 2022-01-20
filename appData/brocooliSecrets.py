@@ -1,5 +1,5 @@
-appIp = '127.0.0.1'
-appVersion = 'v0.1.2-beta'
+appIp = 'project-broccoli.ew.r.appspot.com'
+appVersion = 'v0.1.3-beta'
 appPort = '2000'
 
 emailAddress = "You won't get it from me"
