@@ -139,7 +139,7 @@ def register_proceed():
             user = User(login=formData.username, firstname=formData.firstName, lastname=formData.lastName, email=formData.email, password=hashed_password, verification_message=verification_code)
             db.session.add(user)
             db.session.commit()
-            flash('Konto zostało utworzone! Możesz się teraz zalogować.', 'success')
+            flash('Konto zostało utworzone! Potwierdź je korzystając z linku wysłanego na podany email.', 'info')
             return redirect(url_for('login'))
         else:
             flash('Istnieje już konto z podanym adresem email.', 'danger')
@@ -452,7 +452,7 @@ def reset_password_proceed():
         msg.html = "<b>Otrzymaliśmy prośbę resetu hasła dla konta "+ user.login +" które jest skojarzone z tym adresem email</b><br><p>Jeżeli nie zgłaszałeś takiej prośby lub nie posiadasz konta na naszym portalu, poinformuj nas odpowiadając na ten adres email.</p><br><h1>Resetowanie hasła:</h1><br><p>Twoje nowe hasło: <b>"+ new_password +"</b></p><br>Kliknij w link aby przeprowadzić reset: <a href='https://"+ brocooliSecrets.appIp + "/user/"+ user.login + '/password_reset/' + verification_code + '/' + new_password +"'>https://"+ brocooliSecrets.appIp + "/user/"+ user.login + '/password_reset/' + verification_code + '/' + new_password + "</a>"
         mail.send(msg)
         flash('Polecenie zmiany hasła zostało wysłane na podany adres email.','info')
-        return redirect(url_for('home')) #TODO check if working
+        return redirect(url_for('home'))
     flash('Nie znaleziono kona o podanym adresie email','warning')
     return redirect(url_for('reset_password'))
 

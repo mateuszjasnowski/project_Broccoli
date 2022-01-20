@@ -7,7 +7,8 @@ from appData import brocooliSecrets
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '1c33f4287204b6e6823d1853e224353d'
-app.config['SQLALCHEMY_DATABASE_URI']= 'sqlite:///site.db'
+#app.config['SQLALCHEMY_DATABASE_URI']= 'sqlite:///site.db'
+app.config['SQLALCHEMY_DATABASE_URI']= brocooliSecrets.dbDATABASE_URI
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app) #copy
 login_manager = LoginManager(app) #copy
