@@ -1,0 +1,33 @@
+.formErrorMessage {
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+    position: relative;
+    padding: 1rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    display: none;
+  }
+  .nav-links{
+    transition: 0.8s;
+  }
+  .nav-links:hover {
+    border-color: #6c757d!important;
+    color: #212529;
+    transition: 0.8s;
+  }
+  .post-price-after::after{
+      content: ' PLN';
+  }
+  .post-hover{
+      transition: 0.8s;
+  }
+  .post-hover:hover{
+      transform: scale(1.05);
+      transition: 0.8s;
+  }
+  .form-field-required::after{
+    content: '*';
+    color: #f00;
+  }

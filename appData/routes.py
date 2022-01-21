@@ -78,7 +78,6 @@ def home():
 @app.route('/login')
 def login():
     next_page = request.args.get('next')
-    print(next_page)
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     return render_template('login.html', title='Logowanie', next_page=next_page)
