@@ -14,10 +14,10 @@ class User(db.Model, UserMixin):
     firstname = db.Column(db.String(30))
     lastname = db.Column(db.String(30))
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(90), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(30), default='Unverified')
     posts = db.relationship('Post', backref='author', lazy=True)
-    verification_message = db.Column(db.String(12))
+    verification_message = db.Column(db.String(255))
 
     def __repr__(self):
         return f"User('{self.login}', '{self.firstname}', '{self.lastname}', '{self.email}', '{self.role}')"
