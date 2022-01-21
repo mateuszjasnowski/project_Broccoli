@@ -304,10 +304,8 @@ def edit_user(user_id):
 @login_required
 def user_proceed(user_id):
     user = User.query.get_or_404(user_id)
-    user.login = request.form.get('login')
     user.firstname = request.form.get('userFirstName')
     user.lastname = request.form.get('userLastName')
-    user.email = request.form.get('email')
 
     if request.form.get('status'):
         user.role = request.form.get('status')

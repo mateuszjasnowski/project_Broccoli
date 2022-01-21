@@ -26,21 +26,38 @@ function isEmptyVerification(checkElement, errorElement){
     }
 }
 
+
+function isValueAEmail(checkElement, errorElement){
+    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(checkElement.val())){
+        checkElement.removeClass('border-danger');
+        errorElement.css("display", "none");
+        return true
+    }
+    else{
+        checkElement.addClass('border-danger');
+        errorElement.css("display", "block");
+        return false
+    }
+}
+
+
 function formValidation(){
     if(isEmptyVerification($('#login'),$('#loginErrorEmpty'))){
         if (isEmptyVerification($('#email'),$('#emailErrorEmpty'))){
             if(isEmptyVerification($('#emailConfirm'),$('#emailErrorEmpty'))){
                 if(pairVerification($('#email'),$('#emailConfirm'),$('#emailErrorNotIdentical'))){
-                    if(isEmptyVerification($('#password'),$('#passwordErrorEmpty'))){
-                        if(isEmptyVerification($('#passwordConfirm'),$('#passwordErrorEmpty'))){
-                            if(pairVerification($('#password'),$('#passwordConfirm'),$('#passwordErrorNotIdentical'))){
-                                if($('#confirm-terms').is(':checked')){
-                                    $('#register-form').submit();
-                                }
-                                else{
-                                    $('#termsErrorNotCheked').css("display", "block");
-                                    $('#confirm-terms').css("border","solid 1px red");
-                                }
+                    if (isValueAEmail($('#email'),$('#emailErrorNotCorrect'))){
+                        if(isEmptyVerification($('#password'),$('#passwordErrorEmpty'))){
+                            if(isEmptyVerification($('#passwordConfirm'),$('#passwordErrorEmpty'))){
+                                if(pairVerification($('#password'),$('#passwordConfirm'),$('#passwordErrorNotIdentical'))){
+                                    if($('#confirm-terms').is(':checked')){
+                                        $('#register-form').submit();
+                                    }
+                                    else{
+                                        $('#termsErrorNotCheked').css("display", "block");
+                                        $('#confirm-terms').css("border","solid 1px red");
+                                    }
+                                }else{return}
                             }else{return}
                         }else{return}
                     }else{return}
@@ -51,14 +68,8 @@ function formValidation(){
 }
 
 function EditUserFormValidation(){
-    if (isEmptyVerification($('#login'),$('#loginErrorEmpty'))){
-        if (isEmptyVerification($('#email'),$('#emailErrorEmpty'))){
-            if(pairVerification($('#newPassword'),$('#newPasswordConfirm'),$('#passwordErrorNotIdentical'))){
-                console.log('submit');
-            }
-            else{return}
-        }
-        else{return}
+    if(pairVerification($('#newPassword'),$('#newPasswordConfirm'),$('#passwordErrorNotIdentical'))){
+        $('#edit-user-form').submit();                    
     }
     else{return}
 }

@@ -34,7 +34,7 @@
     <div class="row justify-content-center need-identical">
       <div class="form-floating col-md-6 px-1 my-1">
         <input type="email" class="form-control need-identical-input" id="email" name="email" placeholder="email" required> <!-- border-danger -->
-        <label for="floatingInput" class="form-field-required">Adres email</label> <!-- TODO verification -->
+        <label for="floatingInput" class="form-field-required">Adres email</label>
       </div>
       <div class="form-floating col-md-6 px-1 my-1">
         <input type="email" class="form-control need-identical-input" id="emailConfirm" placeholder="potwierdź email" required> <!-- border-danger -->
@@ -45,6 +45,9 @@
       </div>
       <div class="formErrorMessage" id="emailErrorEmpty">
         Email nie może być pusty !
+      </div>
+      <div class="formErrorMessage" id="emailErrorNotCorrect">
+        Podana wartość nie jest adresem email.
       </div>
     </div>
     <div class="row justify-content-center need-identical">

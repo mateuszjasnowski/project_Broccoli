@@ -14,7 +14,7 @@
     {% endif %}
     {% if request.args.get('wrongPasswordError') == 'true' %}
     <div class="formErrorMessage" style="display: block">
-      Konto o podanym loginie nie istnieje. <a href='{{ url_for('register') }}'>Zarejestruj się</a>
+      Konto o podanym loginie nie istnieje. <a href="{{ url_for('register') }}">Zarejestruj się</a>
     </div>
     {% endif %}
     <h1 class="h3 mb-3 fw-normal">Logowanie</h1>
