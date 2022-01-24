@@ -132,7 +132,7 @@ def register_proceed():
         if formData.isEmailUsed():
             hashed_password = bcrypt.generate_password_hash(formData.password).decode('utf-8')
             verification_code = secrets.token_hex(12)
-            msg = Message('Weryfikacja konta - Brokół', sender = 'jasnycorp@gmail.com', recipients = [formData.email])
+            msg = Message('Weryfikacja konta - Brokuł', sender = 'jasnycorp@gmail.com', recipients = [formData.email])
             msg.html = "Link aktywacyjny: <a href='https://"+ brocooliSecrets.appIp + "/verification_code/"+formData.username+'/'+verification_code+"'>Zweryfikuj</a>"
             mail.send(msg)
             user = User(login=formData.username, firstname=formData.firstName, lastname=formData.lastName, email=formData.email, password=hashed_password, verification_message=verification_code)
@@ -424,7 +424,7 @@ def verify_user(username,verification_code):
 def resend_verification(user_id):
     if current_user.role == 'Admin':
         user = User.query.get_or_404(user_id)
-        msg = Message('Weryfikacja konta - Brokół', sender='jasnycorp@gmail.com', recipients=[user.email])
+        msg = Message('Weryfikacja konta - Brokuł', sender='jasnycorp@gmail.com', recipients=[user.email])
         msg.html = "Link aktywacyjny: <a href='https://"+ brocooliSecrets.appIp + "/verification_code/" + user.login + '/' + user.verification_message + "'>Zweryfikuj</a>"
         mail.send(msg)
         flash('Wiadomość weryfikacyjna została wysłana', 'info')
