@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime #oddzielenie importow libek wbudowanych od instalowanych i od wlasnych jeden enter
+#
 from appData import db, login_manager
 from flask_login import UserMixin
 

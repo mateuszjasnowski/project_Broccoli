@@ -3,7 +3,7 @@ import secrets, os
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
 from appData import app, db, bcrypt, mail
-from appData.models import User, Post
+from appData.models import User, Post #fix import order PEP8
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 from appData import brocooliSecrets
@@ -17,18 +17,25 @@ class BroccoliRegisterForm:
         self.email = email
         self.password = password
 
-    def isUsernameUsed(self):
-        user = User.query.filter_by(login=self.username).first()
+    #camelCase jest zarezerwowany dla nazw class
+    def isUsernameUsed(self): #nazwa funkcji sugeruje ze sprawdzasz czy email jest uzyty, czy juz masz taki w bazie, i zwracasz False jeszeli user jest - is it ok :>?
+        user = User.query.filter_by(login=self.username).first() #fajnie byloby nazywac zmienne tak samo, jak szukasz loginu to daj tam login=self.login
         if user:
             return False
         else:
             return True
+    #nie musisz robic else tutaj wystarczy:
+    # def is_user_name_used(self):
+    #     user = User.query.filter_by(login=self.username).first()
+    #     if user:
+    #         return False
+    #     return True
 
-    def isEmailUsed(self):
+    def isEmailUsed(self): # jak wyzej 
         email = User.query.filter_by(email=self.email).first()
         if email:
             return False
-        else:
+        else: #else do wywalenia
             return True
 
 
@@ -42,9 +49,26 @@ class BroccoliLoginForm:
         user = User.query.filter_by(login=self.username).first()
         if user:
             return True
-        else:
+        else: #else do wywalenia
             return False
 
+#zamiast klasy BroccoliNewPostForm zrobilbym namedtuple
+from collections import namedtuple
+
+BroccoliNewPostForm = namedtuple(
+    'BroccoliNewPostForm',
+    [
+        'manufacture',
+        'model',
+        'manufacture_year',
+        'price',
+        'photo',
+        'description',
+        'author',
+        'location'
+    ]
+)
+#uzywasz tak samo jak klasy, i mozna sie odwolywac do atrybutow jak do obiektu
 
 class BroccoliNewPostForm:
     def __init__(self, manufacture, model, manufacture_year, price, photo, description, author,
@@ -58,7 +82,7 @@ class BroccoliNewPostForm:
         self.author = author
         self.location = location
 
-
+#jak wyzej 
 class BroccoliStatistics:
     def __init__(self, sumOfPosts, sumOfPostsToday, sumOfUsers, buildNumber):
         self.sumOfPosts = sumOfPosts
@@ -66,13 +90,16 @@ class BroccoliStatistics:
         self.sumOfUsers = sumOfUsers
         self.buildNumber = buildNumber
 
+# wszystko co nie jest routa wywalic do innego pliku i zaimportowac
+
 
 # side routes
 @app.route('/')
-@app.route('/home')
+@app.route('/home')# okresl metody
 def home():
     posts = Post.query.all()
-    return render_template('index.html', title='Start', posts=posts)
+    return render_template('index.html', title='Start', posts=posts) # nie przyjmujesz na wejsciu title,
+    #ja bym go wiec nie przekazywal do render template tylko go tam wpisal na sztywno - teraz moze byc mylace
 
 
 @app.route('/login')
@@ -80,20 +107,40 @@ def login():
     next_page = request.args.get('next')
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    return render_template('login.html', title='Logowanie', next_page=next_page)
+    return render_template('login.html', title='Logowanie', next_page=next_page) #to samo apropo title co wyzej
 
 
-@app.route('/login_proceed', methods=["POST", "GET"])
+@app.route('/login_proceed', methods=["POST", "GET"]) #tutaj masz dwa podejscia albo mozesz zrobic dwie routy o tej samej nazwie ale innej metodzie
+#albo zrobic dwa ify i odseparowac kod ktory ma sie wykonac if request.method == get lub if request.metgond == post
 def login_proceed():
     formData = BroccoliLoginForm(request.form.get('login'), request.form.get('password'),
                                  request.form.get('remember-me'))
-    if formData.isUsernameUsed():
+    if formData.isUsernameUsed(): 
         user = User.query.filter_by(login=formData.username).first()
         if user.role == "Unverified":
             flash('Twoje konto nie jest zweryfikowane. Sprawdź swoją skrzynkę mailową', 'warning')
             return redirect(url_for('login'))
-        elif user.role == 'Blocked':
-            flash('Twoje konto jest zablokowane. Skontaktuj się z administratorem', 'danger')
+        elif user.role == 'Blocked': 
+            # w przypadku takich stringow ja preferuje wywalenie ich na gore pliku jako globale BLOCKED = 'Blocked' i uzywanie jej wszedzie
+            #idealnim rozwiazaniem byloby zrobienie tabelki w bazie user_role kolumny role i ID i sprawdzac wszedzie ID dzieku temu jak bedziesz chcial kiedys zmienic
+            #nazwe roli z rasistowskiego master na main :D to zmienisz jej wartosc w kolumnie 'role' i juz kod bedzie dalej smigal (zamiast tabeli w bazie mozesz zrobic slownik
+            # w osobnym pliku lub poczytac o Enumerate)
+            #PRZYKLAD enuma https://docs.python.org/3/library/enum.html
+            # from enum import Enum
+            # class UserRole(Enum):
+            #     ADMIN = 1
+            #     UNVERIFIED = 2
+            #     BLOCKED = 3
+            
+            # ur = UserRole
+
+            # assert ur.ADMIN.value == 1
+            # assert ur.UNVERIFIED.value == 2
+            # assert ur.BLOCKED.value == 3
+            #PRZYKLAD koniec
+
+            flash('Twoje konto jest zablokowane. Skontaktuj się z administratorem', 'danger') 
+            #kazdy string ktory jest uzywty wiecej niz raz do zmiennej na gore pliku ;) DANGER = 'danger'
             return redirect(url_for('login'))
         else:
             if user and bcrypt.check_password_hash(user.password, formData.password):
@@ -101,9 +148,9 @@ def login_proceed():
                 next_page = request.form.get('next_page')
                 if next_page:
                     return redirect(next_page)
-                else:
+                else:# else do wywalenia
                     return redirect(url_for('home'))
-            else:
+            else:#else do wywalenia
                 flash('Błędny login lub hasło.', 'danger')
                 return redirect(url_for('login'))
     flash('Konto o podanym loginie nie istnieje. Spróbuj inny login lub zarejestruj konto', 'danger')
@@ -120,7 +167,7 @@ def logout():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    return render_template('register.html', title='Rejestracja')
+    return render_template('register.html', title='Rejestracja') # co z tym titlem ;)?
 
 
 @app.route('/register_proceed', methods=["POST"])
@@ -137,6 +184,21 @@ def register_proceed():
             mail.send(msg)
             user = User(login=formData.username, firstname=formData.firstName, lastname=formData.lastName, email=formData.email, password=hashed_password, verification_message=verification_code)
             db.session.add(user)
+            # ja bym sie zastanowil czy nie napisac context managera do obslugi transakci w bazie danych, dzieki context managerowi moglbys zadbac o atomowość (atomic rule)
+            # ja cos sie posypie przy commit to zawsze bedziesz mogl zrobic rollback poczytaj o tym bo to fajny wzorzec do roznych rzeczy
+            # from contextlib import contextmanager
+            # @contextmanager
+            # def session_scope():
+            #     """Provide a transactional scope around a series of operations."""
+            #     session = Session()
+            #     try:
+            #         yield session
+            #         session.commit()
+            #     except:
+            #         session.rollback()
+            #         raise
+            #     finally:
+            #         session.close()
             db.session.commit()
             flash('Konto zostało utworzone! Potwierdź je korzystając z linku wysłanego na podany email.', 'info')
             return redirect(url_for('login'))
@@ -187,7 +249,8 @@ def new_post_publish():
                                    request.files['photo'], request.form.get('description'), current_user.id,
                                    request.form.get('location'))
     if formData.photo:
-        carPhotoFile = request.files['photo']
+        carPhotoFile = request.files['photo'] #jezeli to jest slownik to moze sie wywalic jak nie bedzie photo w requescie
+        #mozna uzyc netody .get('photo') i dac defaultowa watrosc jezeli jej nie znajdzie photo
         carPhoto = save_picture(carPhotoFile)
         post = Post(user_id=formData.author, manufacture=formData.manufacture, model=formData.model,
                     manufacture_year=formData.manufacture_year, photo=carPhoto, description=formData.description,
@@ -203,9 +266,10 @@ def new_post_publish():
 
 
 @app.route("/post/<int:post_id>")
-def post(post_id):
+def post(post_id):#nazwa metody jest troszke nie fortunna -> method POST
     post = Post.query.get_or_404(post_id)
-    title = 'Ogłoszenie - ' + post.manufacture + ' ' + post.model
+    title = 'Ogłoszenie - ' + post.manufacture + ' ' + post.model # poczytaj o f'sting
+    title = f'Ogłoszenie - {post.manufacture} {post.model}' # przyklad
     if post.author.role == "Blocked" or post.status == 'Blocked':
         flash('Ogłoszenie jest niedostępne', 'warning')
         if current_user.role != "Admin":
@@ -215,16 +279,19 @@ def post(post_id):
     return render_template('post.html', post=post, title=title)
 
 
-@app.route('/post/<int:post_id>/edit')
+@app.route('/post/<int:post_id>/edit') #metoda ;)?
 @login_required
 def edit_post(post_id):
     post = Post.query.get_or_404(post_id)
-    thisYear = int(datetime.now().strftime("%Y"))
+    thisYear = int(datetime.now().strftime("%Y")) #camelCase -> snake_case, wywalilbym to do osobnej metody w utils
     title = 'Edytuj ogłoszenie - ' + post.manufacture + ' ' + post.model
     if current_user.id == post.author.id or current_user.role == 'Admin':
-        statuses = ['Published', 'Archived', 'Blocked']
+        statuses = ['Published', 'Archived', 'Blocked'] # lista -> tupple nic z tym sie dalej nie dzieje nie musi byc mutowalne, czy te statusy moga byc inne?
+        #jakbys mial je w tabelce to przy dodawaniu nowych nie musial bys tutaj dopisywac wystarczyloby na przyklad 
+        #statuses = (role.role for role in Roles.query.all())
+        #(unikaj zaleznosci w dol zebys nie musial poprawiac potem 100 plikow ;))
         return render_template('edit_post.html', post=post, current_year=thisYear, title=title, statuses=statuses)
-    else:
+    else: #else do wywalenia
         flash('Nie możesz edytować ogłoszenia które nie jest twoje!', 'warning')
         redirectLocation = '/post/' + str(post.id)
         return redirect(redirectLocation)
@@ -235,6 +302,7 @@ def edit_post(post_id):
 def edit_proceed(post_id):
     formData = BroccoliNewPostForm(request.form.get('manufacture'), request.form.get('model'), request.form.get('manufacture_year'), request.form.get('price'), request.files['photo'], request.form.get('description'), current_user.id, request.form.get('location'))
     post = Post.query.get_or_404(post_id)
+    #zrob metode w clasie Post 'edit_post' do ktorej przekazesz formData oraz request i ona zwroci ci zupdatowany post
     post.manufacture = formData.manufacture
     post.model = formData.model
     post.manufacture_year = formData.manufacture_year
@@ -248,7 +316,7 @@ def edit_proceed(post_id):
     if request.form.get('status'):
         post.status = request.form.get('status')
     db.session.commit()
-    redirectLocation = '/post/' + str(post.id)
+    redirectLocation = '/post/' + str(post.id) # f string ;)
     return redirect(redirectLocation)
 
 
@@ -264,9 +332,9 @@ def delete_post(post_id):
         flash('Ogłoszenie zostało usunięte', 'success')
         if request.args.get('back'):
             return redirect(url_for(request.args.get('back')))
-        else:
+        else: #else do wywalenia
             return redirect(url_for('home'))
-    else:
+    else:#else do wywalenia
         flash('Nie możesz wykonać tej akcji', 'danger')
         redirectLocation = '/post/' + str(post.id)
         return redirect(redirectLocation)
@@ -276,12 +344,12 @@ def delete_post(post_id):
 @login_required
 def user(user_id):
     user = User.query.get_or_404(user_id)
-    postOfUser = Post.query.filter_by(user_id=user.id).all()
+    postOfUser = Post.query.filter_by(user_id=user.id).all() #nu nu nu z tym camel casem ;) co sie stanie jak odpalisz ten widok bez rekordow w bazie? jinja ogarnie fora w None ?
     title = 'Użytkownik ' + user.login
     return render_template('user.html', user=user, title=title, posts=postOfUser)
 
 
-def userPasswordChnage(user_id, oldPassword, newPassword):
+def userPasswordChnage(user_id, oldPassword, newPassword): #hm :)?
     return 'Hi'
 
 
@@ -290,10 +358,10 @@ def userPasswordChnage(user_id, oldPassword, newPassword):
 def edit_user(user_id):
     user = User.query.get_or_404(user_id)
     title = 'Edytuj konto ' + user.login
-    roles = ['User', 'Admin', 'Unverified', 'Blocked']
+    roles = ['User', 'Admin', 'Unverified', 'Blocked'] #to co wyzej z rolami 
     if current_user.id == user.id or current_user.role == 'Admin':
         return render_template('edit_user.html', user=user, title=title, roles=roles)
-    else:
+    else: #else do wywalenia
         flash('Nie możesz edytować tego konta!', 'warning')
         redirectLocation = '/user/' + str(user.id)
         return redirect(redirectLocation)
@@ -318,15 +386,15 @@ def user_proceed(user_id):
                 db.session.commit()
                 redirectLocation = '/user/' + str(user.id)
                 return redirect(redirectLocation)
-            else:
+            else: #else do wywalenia
                 flash('Podane obecne hasło jest niepoprawne!','warning')
                 redirectLocation = '/user/' + str(user.id) + '/edit'
                 return redirect(redirectLocation)
-        else:
+        else: #else do wywalenia
             flash('Konieczne jest podanie nowego hasła w celu jego zmiany','warning')
             redirectLocation = '/user/' + str(user.id)
             return redirect(redirectLocation)
-    else:
+    else:#else do wywalenia
         db.session.commit()
         redirectLocation = '/user/' + str(user.id)
         return redirect(redirectLocation)
@@ -344,7 +412,7 @@ def delete_user(user_id):
             return redirect(url_for(request.args.get('back')))
         else:
             return redirect(url_for('home'))
-    else:
+    else: #elsik do wywalenia ;D
         flash('Nie możesz wykonać tej akcji', 'danger')
         redirectLocation = '/user/' + str(user.id)
         return redirect(redirectLocation)
@@ -360,7 +428,7 @@ def admin_panel():
                                         brocooliSecrets.appVersion)  # TODO separate posts created today #BUILD NUM HERE
         return render_template('admin_panel.html', title='Panel administratora', users=users, posts=posts,
                                statistics=statistics)
-    else:
+    else: # wisz co z tym zrobic ;D
         flash('Nie jesteś administratorem!', 'warning')
         return redirect(url_for('home'))
 
@@ -374,7 +442,7 @@ def post_delete_action_confirm(post_id):
     if current_user.id == post.author.id or current_user.role == 'Admin':
         return render_template('action_confirm.html', nextAction=nextAction, previousAction=previousAction,
                                title='Potwierdź usunięcie ogłoszenia')
-    else:
+    else: #ellsik a kysz
         flash('Nie możesz wykonać tej czynności!', 'warning')
         return redirect(url_for(previousAction))
 
@@ -388,10 +456,10 @@ def user_delete_action_confirm(user_id):
     if current_user.id == user.id or current_user.role == 'Admin':
         return render_template('action_confirm.html', nextAction=nextAction, previousAction=previousAction,
                                title='Potwierdź usunięcie urzytkownika')
-    else:
+    else:#ellsik a kysz
         flash('Nie możesz wykonać tej czynności!', 'warning')
         return redirect(url_for(previousAction))
-
+#musze konczyc bo zona krzyczy ;p
 
 @app.route('/post/<int:post_id>/archive')
 @login_required
